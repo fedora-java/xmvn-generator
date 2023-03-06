@@ -1,0 +1,3 @@
+%__xmvngen_provides() %{lua:(require "xmvn-generator").generate('provides')}
+%__xmvngen_requires() %{lua:(require "xmvn-generator").generate('requires')}
+%__xmvngen_path ^/usr/(share|lib)/java/.*\.jar$

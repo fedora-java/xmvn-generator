@@ -1,0 +1,3 @@
+%__xmvngen_debug %{nil}
+%__xmvngen_libjvm %{_jvmdir}/jre-17-openjdk/lib/server/libjvm.so
+%__xmvngen_classpath %{_javadir}/xmvn-generator.jar:%{_javadir}/objectweb-asm/asm.jar:%{_javadir}/commons-compress.jar
