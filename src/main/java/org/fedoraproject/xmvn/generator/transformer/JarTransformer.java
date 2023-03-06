@@ -24,7 +24,7 @@ class JarTransformer {
     public void transformJar(Path targetJar) throws IOException {
         try (ZipFile jar = new ZipFile(targetJar.toFile())) {
             if (jar.getEntry(MANIFEST_PATH) == null) {
-                Logger.debug("Manifest injection skipped: no pre-existing manifest found to update");
+                Logger.debug("transformation skipped: no pre-existing manifest found to update");
                 return;
             }
         } catch (IOException e) {

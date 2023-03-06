@@ -16,8 +16,8 @@
 
 local lujavrite = require "lujavrite"
 
-local libjvm = rpm.expand('%{__xmvngen_libjvm}')
-local classpath = rpm.expand('%{__xmvngen_classpath}')
+local libjvm = rpm.expand("%{__xmvngen_libjvm}")
+local classpath = rpm.expand("%{__xmvngen_classpath}")
 
 -- Initialize JVM
 lujavrite.init(
@@ -38,7 +38,19 @@ local function generate(kind)
    print(deps)
 end
 
+-- Post-install hook
+local function os_install_post()
+   local command = lujavrite.call(
+      "org/fedoraproject/xmvn/generator/stub/CallbackStub", "postInstall",
+      "()Ljava/lang/String;"
+   )
+   print(command)
+   rpm.undefine("__os_install_post")
+   print(rpm.expand("%{__os_install_post}"))
+end
+
 -- Exported module functions
 return {
-  generate = generate
+   generate = generate,
+   os_install_post = os_install_post
 }
