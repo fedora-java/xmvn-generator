@@ -7,16 +7,26 @@ import jdk.incubator.foreign.CLinker;
 import jdk.incubator.foreign.FunctionDescriptor;
 import jdk.incubator.foreign.MemoryAddress;
 import jdk.incubator.foreign.ResourceScope;
-import jdk.incubator.foreign.SymbolLookup;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class RpmBuildContext implements BuildContext {
-    static {
-        System.loadLibrary("rpmio");
+    private static final MethodHandle dlsym = CLinker.getInstance().downcallHandle(
+            CLinker.systemLookup().lookup("dlsym").get(),
+            MethodType.methodType(MemoryAddress.class, MemoryAddress.class, MemoryAddress.class),
+            FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER, CLinker.C_POINTER));
+
+    private static MemoryAddress dlsym(String symbolName) {
+        try (ResourceScope scope = ResourceScope.newConfinedScope()) {
+            MemoryAddress sym = (MemoryAddress) dlsym.invokeExact(MemoryAddress.NULL,
+                    CLinker.toCString(symbolName, scope).address());
+            return sym;
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
-    private static final MethodHandle rpmExpand = CLinker.getInstance().downcallHandle(
-            SymbolLookup.loaderLookup().lookup("rpmExpand").get(),
+
+    private static final MethodHandle rpmExpand = CLinker.getInstance().downcallHandle(dlsym("rpmExpand"),
             MethodType.methodType(MemoryAddress.class, MemoryAddress.class),
             FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER));
 
