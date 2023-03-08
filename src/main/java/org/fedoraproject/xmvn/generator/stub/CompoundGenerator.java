@@ -45,16 +45,16 @@ class CompoundGenerator {
         if (collector == null) {
             collector = new DepsCollector();
             cache.put(filePath, collector);
-            Logger.beg();
+            Logger.startLogging();
             Path buildRoot = Paths.get(buildContext.eval("%{buildroot}"));
             Path shortPath = Paths.get("/").resolve(buildRoot.relativize(filePath));
             Logger.debug(shortPath.toString());
             for (Generator generator : generators) {
-                Logger.cut();
+                Logger.startNewSection();
                 Logger.debug("=> Running generator " + generator.getClass().getSimpleName());
                 generator.generate(filePath, collector);
             }
-            Logger.end();
+            Logger.finishLogging();
         }
         return String.join("\n", collector.getDeps(kind));
     }

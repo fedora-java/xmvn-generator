@@ -34,14 +34,14 @@ class CompoundHook {
     }
 
     void runHook() {
-        Logger.beg();
+        Logger.startLogging();
         Logger.debug("Post-install hooks");
         for (Hook hook : hooks) {
-            Logger.cut();
+            Logger.startNewSection();
             Logger.debug("=> Running hook " + hook.getClass().getSimpleName());
             hook.run();
         }
-        Logger.end();
+        Logger.finishLogging();
     }
 
     public String setUpHook() throws IOException {
