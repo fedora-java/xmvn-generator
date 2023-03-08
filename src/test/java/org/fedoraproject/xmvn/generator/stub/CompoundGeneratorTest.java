@@ -1,6 +1,9 @@
 package org.fedoraproject.xmvn.generator.stub;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,5 +58,38 @@ public class CompoundGeneratorTest {
         String req = cg.runGenerator("requires");
         assertEquals("anotherdep >= 42\nsomereq", req);
         EasyMock.verify(bc, gen1);
+    }
+
+    @Test
+    public void testClassNotFound() throws Exception {
+        BuildContext bc = EasyMock.createMock(BuildContext.class);
+        EasyMock.expect(bc.eval("%{?__xmvngen_generators}")).andReturn("com.foo.Bar");
+        EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
+        EasyMock.replay(bc);
+        try {
+            CompoundGenerator cg = new CompoundGenerator(bc);
+            cg.runGenerator("provides");
+            fail("ClassNotFoundException expected");
+        } catch (Throwable t) {
+            assertInstanceOf(RuntimeException.class, t);
+            Throwable e = t.getCause();
+            assertInstanceOf(ClassNotFoundException.class, e);
+            assertEquals("com.foo.Bar", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testClassIsNotFactory() throws Exception {
+        BuildContext bc = EasyMock.createMock(BuildContext.class);
+        EasyMock.expect(bc.eval("%{?__xmvngen_generators}")).andReturn(CompoundGeneratorTest.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
+        EasyMock.replay(bc);
+        try {
+            CompoundGenerator cg = new CompoundGenerator(bc);
+            cg.runGenerator("provides");
+            fail("ClassCastException expected");
+        } catch (ClassCastException e) {
+            assertTrue(e.getMessage().contains("GeneratorFactory"));
+        }
     }
 }
