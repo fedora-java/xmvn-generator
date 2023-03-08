@@ -67,8 +67,7 @@ public class CompoundGeneratorTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
         try {
-            CompoundGenerator cg = new CompoundGenerator(bc);
-            cg.runGenerator("provides");
+            new CompoundGenerator(bc).runGenerator("provides");
             fail("ClassNotFoundException expected");
         } catch (Throwable t) {
             assertInstanceOf(RuntimeException.class, t);
@@ -86,12 +85,24 @@ public class CompoundGeneratorTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
         try {
-            CompoundGenerator cg = new CompoundGenerator(bc);
-            cg.runGenerator("provides");
+            new CompoundGenerator(bc).runGenerator("provides");
             fail("ClassCastException expected");
         } catch (ClassCastException e) {
             assertTrue(e.getMessage().contains("GeneratorFactory"));
         }
+        EasyMock.verify(bc);
+    }
+
+    @Test
+    public void testNoFactories() throws Exception {
+        BuildContext bc = EasyMock.createMock(BuildContext.class);
+        EasyMock.expect(bc.eval("%{?__xmvngen_generators}")).andReturn("");
+        EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
+        EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/build/root").anyTimes();
+        EasyMock.expect(bc.eval("%1")).andReturn("/build/root/some/file/one").anyTimes();
+        EasyMock.replay(bc);
+        String prov = new CompoundGenerator(bc).runGenerator("provides");
+        assertEquals("", prov);
         EasyMock.verify(bc);
     }
 }

@@ -59,8 +59,7 @@ public class CompoundHookTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
         try {
-            CompoundHook ch = new CompoundHook(bc);
-            ch.runHook();
+            new CompoundHook(bc).runHook();
             fail("ClassNotFoundException expected");
         } catch (Throwable t) {
             assertInstanceOf(RuntimeException.class, t);
@@ -78,12 +77,21 @@ public class CompoundHookTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
         try {
-            CompoundHook ch = new CompoundHook(bc);
-            ch.runHook();
+            new CompoundHook(bc).runHook();
             fail("ClassCastException expected");
         } catch (ClassCastException e) {
             assertTrue(e.getMessage().contains("HookFactory"));
         }
+        EasyMock.verify(bc);
+    }
+
+    @Test
+    public void testNoFactories() throws Exception {
+        BuildContext bc = EasyMock.createMock(BuildContext.class);
+        EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}")).andReturn("");
+        EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
+        EasyMock.replay(bc);
+        new CompoundHook(bc).runHook();
         EasyMock.verify(bc);
     }
 }
