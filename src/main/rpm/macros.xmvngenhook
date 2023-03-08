@@ -1,1 +1,2 @@
+# Override default __os_install_post hook.
 %__os_install_post %{lua:(require "xmvn-generator").os_install_post()}

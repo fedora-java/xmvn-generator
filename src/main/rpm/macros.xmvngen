@@ -1,3 +1,25 @@
+# Debug enable flag.
+# Setting this to non-empty value enables debugging output.
 %__xmvngen_debug %{nil}
+
+# Path to JVM library (libjvm.so).  Java 17 or newer is required.
 %__xmvngen_libjvm %{_jvmdir}/jre-17-openjdk/lib/server/libjvm.so
+
+# Class path of nested JVM.  This should be a colon-separated list of
+# JARs that contains xmvn-generator.jar, JARs with third-party
+# generators or hooks (if any), and all other dependencies.
 %__xmvngen_classpath %{_javadir}/xmvn-generator.jar:%{_javadir}/objectweb-asm/asm.jar:%{_javadir}/commons-compress.jar
+
+# Specify which dependency generators should be ran.
+# Value should be a space-separated list of qualified class names of
+# generator factories (classes implementing GeneratorFactory interface).
+# Available hook factories are:
+#  * org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
+%__xmvngen_generators
+
+# Specify which post-install hooks should be ran.
+# Value should be a space-separated list of qualified class names of
+# hook factories (classes implementing HookFactory interface).
+# Available hook factories are:
+#  * org.fedoraproject.xmvn.generator.transformer.TransformerHookFactory
+%__xmvngen_post_install_hooks
