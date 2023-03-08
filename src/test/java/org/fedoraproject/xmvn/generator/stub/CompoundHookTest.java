@@ -68,6 +68,7 @@ public class CompoundHookTest {
             assertInstanceOf(ClassNotFoundException.class, e);
             assertEquals("com.foo.Bar", e.getMessage());
         }
+        EasyMock.verify(bc);
     }
 
     @Test
@@ -83,5 +84,6 @@ public class CompoundHookTest {
         } catch (ClassCastException e) {
             assertTrue(e.getMessage().contains("HookFactory"));
         }
+        EasyMock.verify(bc);
     }
 }

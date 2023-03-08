@@ -76,6 +76,7 @@ public class CompoundGeneratorTest {
             assertInstanceOf(ClassNotFoundException.class, e);
             assertEquals("com.foo.Bar", e.getMessage());
         }
+        EasyMock.verify(bc);
     }
 
     @Test
@@ -91,5 +92,6 @@ public class CompoundGeneratorTest {
         } catch (ClassCastException e) {
             assertTrue(e.getMessage().contains("GeneratorFactory"));
         }
+        EasyMock.verify(bc);
     }
 }
