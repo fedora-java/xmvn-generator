@@ -15,11 +15,11 @@
 # generator factories (classes implementing GeneratorFactory interface).
 # Available hook factories are:
 #  * org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
-%__xmvngen_generators
+%__xmvngen_generators %{nil}
 
 # Specify which post-install hooks should be ran.
 # Value should be a space-separated list of qualified class names of
 # hook factories (classes implementing HookFactory interface).
 # Available hook factories are:
 #  * org.fedoraproject.xmvn.generator.transformer.TransformerHookFactory
-%__xmvngen_post_install_hooks
+%__xmvngen_post_install_hooks %{nil}
