@@ -100,6 +100,7 @@ public class CompoundGeneratorTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/build/root").anyTimes();
         EasyMock.expect(bc.eval("%1")).andReturn("/build/root/some/file/one").anyTimes();
+        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no generators were specified}")).andReturn("");
         EasyMock.replay(bc);
         String prov = new CompoundGenerator(bc).runGenerator("provides");
         assertEquals("", prov);

@@ -34,6 +34,9 @@ class CompoundGenerator {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+        if (generators.isEmpty()) {
+            buildContext.eval("%{warn:xmvn-generator: no generators were specified}");
+        }
     }
 
     public String runGenerator(String kind) {

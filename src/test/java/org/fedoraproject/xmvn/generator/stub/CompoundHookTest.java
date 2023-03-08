@@ -90,6 +90,7 @@ public class CompoundHookTest {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
         EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}")).andReturn("");
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
+        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no post-install hooks were specified}")).andReturn("");
         EasyMock.replay(bc);
         new CompoundHook(bc).runHook();
         EasyMock.verify(bc);

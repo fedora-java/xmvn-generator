@@ -28,6 +28,9 @@ class CompoundHook {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+        if (hooks.isEmpty()) {
+            buildContext.eval("%{warn:xmvn-generator: no post-install hooks were specified}");
+        }
     }
 
     void runHook() {
