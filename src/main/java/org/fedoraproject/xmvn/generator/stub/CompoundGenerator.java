@@ -2,11 +2,10 @@ package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Generator;
@@ -15,19 +14,29 @@ import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class CompoundGenerator {
     private final BuildContext buildContext;
-    private final List<Generator> generators;
+    private final List<Generator> generators = new ArrayList<>();
     private final Map<Path, DepsCollector> cache = new LinkedHashMap<>();
 
-    public CompoundGenerator(BuildContext buildContext, GeneratorFactory... factories) {
+    public CompoundGenerator(BuildContext buildContext) {
         this.buildContext = buildContext;
-        generators = Arrays.asList(factories).stream().map(factory -> factory.createGenerator(buildContext))
-                .collect(Collectors.toList());
-    }
-
-    public String runGenerator(String kind) {
         if (!buildContext.eval("%{?__xmvngen_debug}").isEmpty()) {
             Logger.enableDebug();
         }
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            for (String cn : buildContext.eval("%{?__xmvngen_generators}").split("\\s+")) {
+                if (!cn.isEmpty()) {
+                    GeneratorFactory factory = (GeneratorFactory) cl.loadClass(cn).getDeclaredConstructor()
+                            .newInstance();
+                    generators.add(factory.createGenerator(buildContext));
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String runGenerator(String kind) {
         Path filePath = Paths.get(buildContext.eval("%1"));
         DepsCollector collector = cache.get(filePath);
         if (collector == null) {
