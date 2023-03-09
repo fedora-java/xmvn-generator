@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class ModuleInfoGleanerTest {
     private Path srcDir;
     @TempDir
     private Path binDir;
-    private Deque<Path> modulePath = new ArrayDeque<>();
+    private final Deque<Path> modulePath = new ArrayDeque<>();
     private Collector collector;
     private ModuleInfoGleaner gleaner;
 
@@ -153,7 +152,7 @@ public class ModuleInfoGleanerTest {
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null)) {
                 Iterable<? extends JavaFileObject> compilationUnits = fileManager
-                        .getJavaFileObjectsFromFiles(Collections.singletonList(moduleInfoJava.toFile()));
+                        .getJavaFileObjectsFromFiles(List.of(moduleInfoJava.toFile()));
                 StringWriter compilerOutput = new StringWriter();
                 CompilationTask task = compiler.getTask(compilerOutput, fileManager, null, opts, null,
                         compilationUnits);

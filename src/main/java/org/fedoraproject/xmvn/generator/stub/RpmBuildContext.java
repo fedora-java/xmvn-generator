@@ -18,9 +18,8 @@ class RpmBuildContext implements BuildContext {
 
     private static MemoryAddress dlsym(String symbolName) {
         try (ResourceScope scope = ResourceScope.newConfinedScope()) {
-            MemoryAddress sym = (MemoryAddress) dlsym.invokeExact(MemoryAddress.NULL,
+            return (MemoryAddress) dlsym.invokeExact(MemoryAddress.NULL,
                     CLinker.toCString(symbolName, scope).address());
-            return sym;
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

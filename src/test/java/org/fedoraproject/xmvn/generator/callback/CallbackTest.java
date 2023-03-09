@@ -11,9 +11,7 @@ public class CallbackTest {
     @Test
     public void testCallback() throws Exception {
         Semaphore sema = new Semaphore(0);
-        Runnable x = () -> {
-            sema.release();
-        };
+        Runnable x = sema::release;
         Callback cb = Callback.setUp(x);
         Process p = new ProcessBuilder(cb.getCommand()).inheritIO().start();
         boolean acquired = sema.tryAcquire(5, TimeUnit.SECONDS);

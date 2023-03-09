@@ -41,9 +41,8 @@ public class CompoundGeneratorTest {
     @Test
     public void testCompoundGenerator() {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(bc.eval("%{?__xmvngen_generators}"))
-                .andReturn("\n " + TestGeneratorFactory1.class.getName().toString() + " \n\t   "
-                        + TestGeneratorFactory2.class.getName().toString() + " ");
+        EasyMock.expect(bc.eval("%{?__xmvngen_generators}")).andReturn("\n " + TestGeneratorFactory1.class.getName()
+                + " \n\t   " + TestGeneratorFactory2.class.getName() + " ");
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/build/root").anyTimes();
         EasyMock.expect(bc.eval("%1")).andReturn("/build/root/some/file/one").times(2);

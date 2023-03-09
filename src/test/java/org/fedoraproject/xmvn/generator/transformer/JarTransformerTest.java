@@ -166,7 +166,7 @@ public class JarTransformerTest {
         jarTransformer = new JarTransformer(mf -> {
             throw new RuntimeException("boom");
         });
-        Exception ex = assertThrows(Exception.class, () -> performTest());
+        Exception ex = assertThrows(Exception.class, this::performTest);
         assertTrue(ex.getMessage().contains(backupPath.toString()),
                 "An exception thrown when injecting manifest does not mention stored backup file");
         assertTrue(Files.exists(backupPath));
@@ -179,7 +179,7 @@ public class JarTransformerTest {
             /// will be retained
             os.write(0);
         }
-        assertThrows(Exception.class, () -> performTest());
+        assertThrows(Exception.class, this::performTest);
         assertArrayEquals(backupContent, Files.readAllBytes(backupPath),
                 "Backup file content was overwritten after an unsuccessful injection");
         Files.delete(backupPath);
@@ -193,8 +193,7 @@ public class JarTransformerTest {
     @Test
     public void testFailWhenBachupPresent() throws Exception {
         Files.writeString(backupPath, "something");
-        assertThrows(Exception.class, () -> performTest(),
-                "Expected failure because the the backup file already exists");
+        assertThrows(Exception.class, this::performTest, "Expected failure because the the backup file already exists");
         assertTrue(Files.exists(backupPath));
     }
 }

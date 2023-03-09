@@ -17,7 +17,7 @@ class JPMSGenerator implements Generator {
         try (JarInputStream jarInputStream = new JarInputStream(Files.newInputStream(filePath))) {
             manifestGleaner.glean(jarInputStream.getManifest());
             for (JarEntry jarEntry; (jarEntry = jarInputStream.getNextJarEntry()) != null;) {
-                if (jarEntry.getRealName().equals("module-info.class")) {
+                if ("module-info.class".equals(jarEntry.getRealName())) {
                     moduleInfoGleaner.glean(jarInputStream);
                 }
             }
