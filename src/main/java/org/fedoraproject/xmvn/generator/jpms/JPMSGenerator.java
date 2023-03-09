@@ -25,4 +25,9 @@ class JPMSGenerator implements Generator {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

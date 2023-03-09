@@ -2,10 +2,12 @@ package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Generator;
@@ -14,26 +16,32 @@ import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class CompoundGenerator {
     private final BuildContext buildContext;
-    private final List<Generator> generators = new ArrayList<>();
+    private final List<FilteredGenerator> generators;
     private final Map<Path, DepsCollector> cache = new LinkedHashMap<>();
+
+    private Generator loadGenerator(String cn) {
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            GeneratorFactory factory = (GeneratorFactory) cl.loadClass(cn).getDeclaredConstructor().newInstance();
+            return factory.createGenerator(buildContext);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public CompoundGenerator(BuildContext buildContext) {
         this.buildContext = buildContext;
         if (!buildContext.eval("%{?__xmvngen_debug}").isEmpty()) {
             Logger.enableDebug();
         }
-        try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            for (String cn : buildContext.eval("%{?__xmvngen_generators}").split("\\s+")) {
-                if (!cn.isEmpty()) {
-                    GeneratorFactory factory = (GeneratorFactory) cl.loadClass(cn).getDeclaredConstructor()
-                            .newInstance();
-                    generators.add(factory.createGenerator(buildContext));
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        Set<String> provCns = Set.of(buildContext.eval("%{?__xmvngen_provides_generators}").split("\\s+"));
+        Set<String> reqCns = Set.of(buildContext.eval("%{?__xmvngen_requires_generators}").split("\\s+"));
+        Set<String> allCns = new LinkedHashSet<>();
+        allCns.addAll(provCns);
+        allCns.addAll(reqCns);
+        generators = allCns.stream().filter(cn -> !cn.isEmpty())
+                .map(cn -> new FilteredGenerator(loadGenerator(cn), provCns.contains(cn), reqCns.contains(cn)))
+                .collect(Collectors.toUnmodifiableList());
         if (generators.isEmpty()) {
             buildContext.eval("%{warn:xmvn-generator: no generators were specified}");
         }
@@ -51,7 +59,7 @@ class CompoundGenerator {
             Logger.debug(shortPath.toString());
             for (Generator generator : generators) {
                 Logger.startNewSection();
-                Logger.debug("=> Running generator " + generator.getClass().getSimpleName());
+                Logger.debug("=> Running generator " + generator);
                 generator.generate(filePath, collector);
             }
             Logger.finishLogging();

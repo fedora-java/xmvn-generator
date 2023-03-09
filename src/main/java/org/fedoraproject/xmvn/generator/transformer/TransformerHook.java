@@ -51,4 +51,9 @@ class TransformerHook implements Hook {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

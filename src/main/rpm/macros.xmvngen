@@ -11,11 +11,12 @@
 %__xmvngen_classpath %{_javadir}/xmvn-generator.jar:%{_javadir}/objectweb-asm/asm.jar:%{_javadir}/commons-compress.jar
 
 # Specify which dependency generators should be ran.
-# Value should be a space-separated list of qualified class names of
+# Values should be a space-separated list of qualified class names of
 # generator factories (classes implementing GeneratorFactory interface).
 # Available hook factories are:
 #  * org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
-%__xmvngen_generators %{nil}
+%__xmvngen_provides_generators %{nil}
+%__xmvngen_requires_generators %{nil}
 
 # Specify which post-install hooks should be ran.
 # Value should be a space-separated list of qualified class names of
