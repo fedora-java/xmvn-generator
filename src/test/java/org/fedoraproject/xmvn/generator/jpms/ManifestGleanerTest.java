@@ -41,6 +41,12 @@ public class ManifestGleanerTest {
     }
 
     @Test
+    public void testNullManifest() {
+        manifest = null;
+        performTest();
+    }
+
+    @Test
     public void testSimple() {
         updateManifest("Automatic-Module-Name", "foo.bar");
         expectProvides("jpms(foo.bar)");

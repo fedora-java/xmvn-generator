@@ -12,9 +12,11 @@ class ManifestGleaner {
     }
 
     public void glean(Manifest mf) {
-        String autoName = mf.getMainAttributes().getValue("Automatic-Module-Name");
-        if (autoName != null) {
-            collector.addProvides("jpms(" + autoName + ")");
+        if (mf != null) {
+            String autoName = mf.getMainAttributes().getValue("Automatic-Module-Name");
+            if (autoName != null) {
+                collector.addProvides("jpms(" + autoName + ")");
+            }
         }
     }
 }
