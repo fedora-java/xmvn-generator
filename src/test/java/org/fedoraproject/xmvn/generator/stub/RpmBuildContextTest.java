@@ -16,13 +16,17 @@ import org.junit.jupiter.api.Test;
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 public class RpmBuildContextTest {
-    private static final MethodHandle dlopen = CLinker.getInstance().downcallHandle(
-            CLinker.systemLookup().lookup("dlopen").get(),
-            MethodType.methodType(MemoryAddress.class, MemoryAddress.class, int.class),
-            FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER, CLinker.C_INT));
-
+    /**
+     * Normally xmvn-generator is running in embedded JVM inside rpmbuild process,
+     * so all RPM libraries are already available for {@code dlsym()}. But tests are
+     * not ran from from rpmbuild, so we need to {@code dlopen(rpmio.so)} library
+     * first to get {@code rpmExpand} symbol available.
+     */
     @BeforeAll
     public static void setUpClass() {
+        MethodHandle dlopen = CLinker.getInstance().downcallHandle(CLinker.systemLookup().lookup("dlopen").get(),
+                MethodType.methodType(MemoryAddress.class, MemoryAddress.class, int.class),
+                FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER, CLinker.C_INT));
         try (ResourceScope scope = ResourceScope.newConfinedScope()) {
             MemoryAddress handle = (MemoryAddress) dlopen.invokeExact(CLinker.toCString("librpmio.so", scope).address(),
                     0x101);
