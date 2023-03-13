@@ -1,41 +1,26 @@
 package org.fedoraproject.xmvn.generator.stub;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
-
-import jdk.incubator.foreign.CLinker;
-import jdk.incubator.foreign.FunctionDescriptor;
-import jdk.incubator.foreign.MemoryAddress;
-import jdk.incubator.foreign.ResourceScope;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class RpmBuildContext implements BuildContext {
-    private static final MethodHandle dlsym = CLinker.getInstance().downcallHandle(
-            CLinker.systemLookup().lookup("dlsym").get(),
-            MethodType.methodType(MemoryAddress.class, MemoryAddress.class, MemoryAddress.class),
-            FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER, CLinker.C_POINTER));
-
-    private static MemoryAddress dlsym(String symbolName) {
-        try (ResourceScope scope = ResourceScope.newConfinedScope()) {
-            return (MemoryAddress) dlsym.invokeExact(MemoryAddress.NULL,
-                    CLinker.toCString(symbolName, scope).address());
-        } catch (Throwable e) {
+    static {
+        try (InputStream is = RpmBuildContext.class.getResourceAsStream("/xmvn-generator-native.so")) {
+            Path p = Files.createTempFile("xmvngen-native", ".so");
+            try (OutputStream os = Files.newOutputStream(p)) {
+                is.transferTo(os);
+            }
+            System.load(p.toString());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-    private static final MethodHandle rpmExpand = CLinker.getInstance().downcallHandle(dlsym("rpmExpand"),
-            MethodType.methodType(MemoryAddress.class, MemoryAddress.class),
-            FunctionDescriptor.of(CLinker.C_POINTER, CLinker.C_POINTER));
 
     @Override
-    public String eval(String macro) {
-        try (var macroScope = ResourceScope.newConfinedScope()) {
-            return CLinker.toJavaString(
-                    (MemoryAddress) rpmExpand.invokeExact(CLinker.toCString(macro, macroScope).address()));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public native String eval(String macro);
 }

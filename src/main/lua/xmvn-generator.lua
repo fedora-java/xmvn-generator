@@ -23,8 +23,6 @@ local classpath = rpm.expand("%{__xmvngen_classpath}")
 lujavrite.init(
    libjvm,
    "-Djava.class.path=" .. classpath,
-   "--enable-preview",
-   "--add-modules=jdk.incubator.foreign",
    "--enable-native-access=ALL-UNNAMED"
 )
 
