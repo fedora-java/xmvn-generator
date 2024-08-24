@@ -22,7 +22,7 @@ class RpmLujavriteStub {
 
 public class RpmLujavriteTest {
     @Test
-    public void testContextWithoutLibRpmIo() throws Exception {
+    public void testCallThrougtRpmLujavrite() throws Exception {
         Path javaExecutable = Path.of(ProcessHandle.current().info().command().get());
         assertTrue(javaExecutable.endsWith(Path.of("bin/java")));
         Path javaHome = javaExecutable.getParent().getParent();
