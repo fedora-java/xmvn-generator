@@ -2,8 +2,8 @@
 # Setting this to non-empty value enables debugging output.
 %__xmvngen_debug %{nil}
 
-# Path to JVM library (libjvm.so).  Java 21 or newer is required.
-%__xmvngen_libjvm %{_jvmdir}/jre-21-openjdk/lib/server/libjvm.so
+# Path to JVM library (libjvm.so).  Java 22 or newer is required.
+%__xmvngen_libjvm %{_jvmdir}/jre-22-openjdk/lib/server/libjvm.so
 
 # Class path of nested JVM.  This should be a colon-separated list of
 # JARs that contains xmvn-generator.jar, JARs with third-party
