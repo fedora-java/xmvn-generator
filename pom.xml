@@ -111,41 +111,18 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <configuration>
-              <target>
-                <property environment="env"/>
-                <property name="env.JAVA_HOME" value="/usr/lib/jvm/java"/>
-                <property name="env.CC" value="cc"/>
-                <property name="env.CFLAGS" value="-g -Wall -Wextra"/>
-                <property name="env.LDFLAGS" value=""/>
-                <exec executable="${env.CC}">
-                  <arg line="-std=c99 -shared -fPIC"/>
-                  <arg value="-I${env.JAVA_HOME}/include"/>
-                  <arg value="-I${env.JAVA_HOME}/include/linux"/>
-                  <arg line="${env.CFLAGS}"/>
-                  <arg line="-l rpmio"/>
-                  <arg line="${env.LDFLAGS}"/>
-                  <arg value="-o"/>
-                  <arg value="${project.build.outputDirectory}/xmvn-generator-native.so"/>
-                  <arg value="${project.basedir}/src/main/jni/xmvn-generator-native.c"/>
-                </exec>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M7</version>
+        <configuration>
+          <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+	  <!-- Can't reuse forks to ensure proper test isolation.
+	       Each test must be ran in a separate process because
+	       some tests call dlopen() with RTLD_GLOBAL, thus
+	       modifying libraries in the context of the running
+	       process, which afects other tests. -->
+          <forkCount>1C</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
       </plugin>
     </plugins>
   </build>
