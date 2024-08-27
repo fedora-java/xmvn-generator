@@ -38,7 +38,7 @@ class CompoundHook {
         Logger.debug("Post-install hooks");
         for (Hook hook : hooks) {
             Logger.startNewSection();
-            Logger.debug("=> Running hook " + hook);
+            Logger.debug("Running " + hook + " (" + hook.getClass().getCanonicalName() + ")");
             hook.run();
         }
         Logger.finishLogging();

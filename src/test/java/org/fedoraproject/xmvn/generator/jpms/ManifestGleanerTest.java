@@ -1,5 +1,6 @@
 package org.fedoraproject.xmvn.generator.jpms;
 
+import java.nio.file.Path;
 import java.util.jar.Manifest;
 
 import org.easymock.EasyMock;
@@ -11,13 +12,15 @@ import org.fedoraproject.xmvn.generator.Collector;
 public class ManifestGleanerTest {
     private Collector collector;
     private Manifest manifest;
+    private Path filePath;
     private ManifestGleaner gleaner;
 
     @BeforeEach
     public void setUp() {
         collector = EasyMock.createStrictMock(Collector.class);
         manifest = new Manifest();
-        gleaner = new ManifestGleaner(collector);
+        filePath = Path.of("something");
+        gleaner = new ManifestGleaner(filePath, collector);
     }
 
     private void updateManifest(String key, String value) {
@@ -25,7 +28,7 @@ public class ManifestGleanerTest {
     }
 
     private void expectProvides(String prov) {
-        collector.addProvides(prov);
+        collector.addProvides(filePath, prov);
         EasyMock.expectLastCall();
     }
 

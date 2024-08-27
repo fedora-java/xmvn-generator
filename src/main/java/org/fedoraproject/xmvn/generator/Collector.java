@@ -1,6 +1,8 @@
 package org.fedoraproject.xmvn.generator;
 
+import java.nio.file.Path;
+
 public interface Collector {
-    void addProvides(String name);
-    void addRequires(String name);
+    void addProvides(Path filePath, String name);
+    void addRequires(Path filePath, String name);
 }

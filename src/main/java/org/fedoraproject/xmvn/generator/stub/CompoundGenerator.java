@@ -1,7 +1,7 @@
 package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,6 +18,7 @@ class CompoundGenerator {
     private final BuildContext buildContext;
     private final List<FilteredGenerator> generators;
     private final Map<Path, DepsCollector> cache = new LinkedHashMap<>();
+    private DepsCollector collector;
 
     private Generator loadGenerator(String cn) {
         try {
@@ -48,22 +49,39 @@ class CompoundGenerator {
     }
 
     public String runGenerator(String kind) {
-        Path filePath = Paths.get(buildContext.eval("%1"));
-        DepsCollector collector = cache.get(filePath);
+        int n = Integer.parseInt(buildContext.eval("%#"));
+        boolean multifile = n != 1;
+        List<Path> filePaths = new ArrayList<>(n);
+        for (int i = 1; i <= n; i++) {
+            filePaths.add(Path.of(buildContext.eval("%" + i)));
+        }
+        if (!multifile) {
+            collector = cache.get(filePaths.getFirst());
+        }
         if (collector == null) {
-            collector = new DepsCollector();
-            cache.put(filePath, collector);
+            Path buildRoot = Path.of(buildContext.eval("%{buildroot}"));
+            collector = new DepsCollector(filePaths, buildRoot);
+            if (!multifile) {
+                cache.put(filePaths.getFirst(), collector);
+            }
             Logger.startLogging();
-            Path buildRoot = Paths.get(buildContext.eval("%{buildroot}"));
-            Path shortPath = Paths.get("/").resolve(buildRoot.relativize(filePath));
-            Logger.debug(shortPath.toString());
             for (Generator generator : generators) {
                 Logger.startNewSection();
-                Logger.debug("=> Running generator " + generator);
-                generator.generate(filePath, collector);
+                Logger.debug("Running " + generator + " (" + generator.getClass().getCanonicalName() + ")");
+                generator.generate(filePaths, collector);
             }
             Logger.finishLogging();
         }
-        return String.join("\n", collector.getDeps(kind));
+        StringBuilder sb = new StringBuilder();
+        for (Path filePath : filePaths) {
+            Set<String> deps = collector.getDeps(filePath, kind);
+            if (multifile && !deps.isEmpty()) {
+                sb.append(';').append(filePath).append('\n');
+            }
+            for (String dep : deps) {
+                sb.append(dep).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

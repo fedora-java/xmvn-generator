@@ -32,12 +32,14 @@ public class ModuleInfoGleanerTest {
     private Path binDir;
     private final Deque<Path> modulePath = new ArrayDeque<>();
     private Collector collector;
+    private Path filePath;
     private ModuleInfoGleaner gleaner;
 
     @BeforeEach
     public void setUp() {
         collector = EasyMock.createStrictMock(Collector.class);
-        gleaner = new ModuleInfoGleaner(collector);
+        filePath = Path.of("something");
+        gleaner = new ModuleInfoGleaner(filePath, collector);
     }
 
     private ModuleInfoBuilder mod(String name, String version) {
@@ -45,12 +47,12 @@ public class ModuleInfoGleanerTest {
     }
 
     private void expectProvides(String dep) {
-        collector.addProvides(dep);
+        collector.addProvides(filePath, dep);
         EasyMock.expectLastCall();
     }
 
     private void expectRequires(String dep) {
-        collector.addRequires(dep);
+        collector.addRequires(filePath, dep);
         EasyMock.expectLastCall();
     }
 

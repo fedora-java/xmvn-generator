@@ -8,6 +8,7 @@ import static org.objectweb.asm.Opcodes.ASM9;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -18,8 +19,10 @@ import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class ModuleInfoGleaner {
     private final Collector collector;
+    private final Path filePath;
 
-    public ModuleInfoGleaner(Collector collector) {
+    public ModuleInfoGleaner(Path filePath, Collector collector) {
+        this.filePath = filePath;
         this.collector = collector;
     }
 
@@ -32,7 +35,7 @@ class ModuleInfoGleaner {
                 if (modVersion != null) {
                     prov.append(" = ").append(modVersion);
                 }
-                collector.addProvides(prov.toString());
+                collector.addProvides(filePath, prov.toString());
                 return new ModuleVisitor(ASM9) {
                     @Override
                     public void visitRequire(String depName, int depAccess, String depVersion) {
@@ -41,7 +44,7 @@ class ModuleInfoGleaner {
                             Logger.debug("     skipped dependency on " + depName + " (access flags 0x"
                                     + Integer.toHexString(depAccess) + ")");
                         } else if ((depAccess & ACC_TRANSITIVE) != 0) {
-                            collector.addRequires(dep);
+                            collector.addRequires(filePath, dep);
                         } else {
                             Logger.debug("     skipped dependency on " + depName + " (intransitive)");
                         }

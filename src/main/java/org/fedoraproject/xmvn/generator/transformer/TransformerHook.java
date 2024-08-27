@@ -54,6 +54,6 @@ class TransformerHook implements Hook {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return "JAR tfansformer hook";
     }
 }

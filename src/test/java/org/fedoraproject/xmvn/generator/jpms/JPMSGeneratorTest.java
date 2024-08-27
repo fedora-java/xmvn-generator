@@ -1,7 +1,7 @@
 package org.fedoraproject.xmvn.generator.jpms;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,27 +17,28 @@ public class JPMSGeneratorTest {
         collector = EasyMock.createMock(Collector.class);
     }
 
-    private void expectProvides(String prov) {
-        collector.addProvides(prov);
+    private void expectProvides(Path filePath, String prov) {
+        collector.addProvides(filePath, prov);
         EasyMock.expectLastCall();
     }
 
-    private void performTest(String jarName) {
-        Path jarPath = Paths.get("src/test/resources").resolve(jarName);
+    private void performTest(Path jarPath) {
         EasyMock.replay(collector);
-        new JPMSGenerator().generate(jarPath, collector);
+        new JPMSGenerator().generate(List.of(jarPath), collector);
         EasyMock.verify(collector);
     }
 
     @Test
     public void testSimpleJar() {
-        expectProvides("jpms(foo)");
-        performTest("simple.jar");
+        Path jarPath = Path.of("src/test/resources/simple.jar");
+        expectProvides(jarPath, "jpms(foo)");
+        performTest(jarPath);
     }
 
     @Test
     public void testMultiReleaseJar() {
-        expectProvides("jpms(foo)");
-        performTest("mr.jar");
+        Path jarPath = Path.of("src/test/resources/mr.jar");
+        expectProvides(jarPath, "jpms(foo)");
+        performTest(jarPath);
     }
 }

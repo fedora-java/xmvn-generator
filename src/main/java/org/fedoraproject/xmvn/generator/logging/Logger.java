@@ -1,7 +1,7 @@
 package org.fedoraproject.xmvn.generator.logging;
 
 public class Logger {
-    private static final int BOX_WIDTH = 80;
+    private static final int BOX_WIDTH = 120;
     private static final boolean UNICODE = true;
     private static final char BOX_TOP_LEFT = UNICODE ? '╔' : '#';
     private static final char BOX_TOP_RIGHT = UNICODE ? '╗' : '#';
