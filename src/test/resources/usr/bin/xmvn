@@ -1,0 +1,3 @@
+#!/usr/bin/sh -e
+export _FEDORA_MAVEN_HOME="/usr/share/xmvn"
+exec /usr/share/maven/bin/mvn "${@}"

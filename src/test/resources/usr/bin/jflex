@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+#
+# jflex script
+# JPackage Project <http://www.jpackage.org/>
+
+# Source functions library
+_prefer_jre="true"
+. /usr/share/java-utils/java-functions
+
+# Source system prefs
+if [ -f /etc/java/jflex.conf ] ; then
+  . /etc/java/jflex.conf
+fi
+
+# Source user prefs
+if [ -f $HOME/.jflexrc ] ; then
+  . $HOME/.jflexrc
+fi
+
+# Configuration
+MAIN_CLASS=jflex.Main
+BASE_FLAGS=""
+BASE_OPTIONS=""
+BASE_JARS="jflex java_cup"
+
+# Set parameters
+set_jvm
+set_classpath $BASE_JARS
+set_flags $BASE_FLAGS
+set_options $BASE_OPTIONS
+
+# Let's start
+run "$@"
