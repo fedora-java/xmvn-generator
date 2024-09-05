@@ -9,7 +9,7 @@ import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Generator;
 import org.fedoraproject.xmvn.generator.GeneratorFactory;
 
-public class FilesystemGeneratorFactoryTest {
+public class JPackageScriptGeneratorFactoryTest {
     @Test
     public void testFactory() {
         BuildContext bc = EasyMock.createStrictMock(BuildContext.class);
