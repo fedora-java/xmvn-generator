@@ -46,6 +46,6 @@ class FilesystemGenerator implements Generator {
 
     @Override
     public String toString() {
-        return "JPMS generator";
+        return "javapackages-filesystem generator";
     }
 }
