@@ -15,6 +15,7 @@
 # generator factories (classes implementing GeneratorFactory interface).
 # Available hook factories are:
 #  * org.fedoraproject.xmvn.generator.filesystem.FilesystemGeneratorFactory
+#  * org.fedoraproject.xmvn.generator.jpscript.JPackageScriptGeneratorFactory
 #  * org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
 %__xmvngen_provides_generators %{nil}
 %__xmvngen_requires_generators %{nil}
