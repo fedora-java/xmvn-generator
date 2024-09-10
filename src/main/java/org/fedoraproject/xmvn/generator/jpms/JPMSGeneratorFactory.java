@@ -7,6 +7,6 @@ import org.fedoraproject.xmvn.generator.GeneratorFactory;
 public class JPMSGeneratorFactory implements GeneratorFactory {
     @Override
     public Generator createGenerator(BuildContext context) {
-        return new JPMSGenerator();
+        return new JPMSGenerator(context);
     }
 }

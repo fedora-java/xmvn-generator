@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.logging.Logger;
@@ -33,10 +33,11 @@ class TransformerHook implements Hook {
                 if (!Files.isDirectory(prefix, LinkOption.NOFOLLOW_LINKS)) {
                     continue;
                 }
-                List<Path> javaFiles = Files
-                        .find(prefix, 10,
-                                (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".jar"))
-                        .collect(Collectors.toList());
+                List<Path> javaFiles;
+                try (Stream<Path> paths = Files.find(prefix, 10,
+                        (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".jar"))) {
+                    javaFiles = paths.toList();
+                }
                 for (Path filePath : javaFiles) {
                     JarTransformer jarTransformer = new JarTransformer(manifestTransformer);
                     Logger.debug("injecting manifest into " + Paths.get("/").resolve(buildRoot.relativize(filePath)));

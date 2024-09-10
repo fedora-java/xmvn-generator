@@ -1,7 +1,6 @@
 package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
@@ -40,8 +39,8 @@ class FilteredGenerator implements Generator {
     }
 
     @Override
-    public void generate(List<Path> filePaths, Collector collector) {
-        delegate.generate(filePaths, new FilteringCollector(collector));
+    public void generate(Collector collector) {
+        delegate.generate(new FilteringCollector(collector));
     }
 
     @Override

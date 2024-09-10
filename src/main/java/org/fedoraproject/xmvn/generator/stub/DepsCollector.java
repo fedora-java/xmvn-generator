@@ -3,7 +3,6 @@ package org.fedoraproject.xmvn.generator.stub;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,30 +25,26 @@ public class DepsCollector implements Collector {
         Logger.debug("  -> found " + kind + ": " + dep);
     }
 
-    public DepsCollector(List<Path> filePaths, Path buildRoot) {
+    public DepsCollector(Path buildRoot) {
         this.buildRoot = buildRoot;
-        for (Path filePath : filePaths) {
-            provides.put(filePath, new TreeSet<>());
-            requires.put(filePath, new TreeSet<>());
-        }
     }
 
     @Override
     public void addProvides(Path filePath, String dep) {
-        provides.get(filePath).add(dep);
+        provides.computeIfAbsent(filePath, x -> new TreeSet<>()).add(dep);
         found("Provides", filePath, dep);
     }
 
     @Override
     public void addRequires(Path filePath, String dep) {
-        requires.get(filePath).add(dep);
+        requires.computeIfAbsent(filePath, x -> new TreeSet<>()).add(dep);
         found("Requires", filePath, dep);
     }
 
     public Set<String> getDeps(Path filePath, String kind) {
         return switch (kind) {
-        case "provides" -> provides.get(filePath);
-        case "requires" -> requires.get(filePath);
+        case "provides" -> provides.computeIfAbsent(filePath, x -> new TreeSet<>());
+        case "requires" -> requires.computeIfAbsent(filePath, x -> new TreeSet<>());
         default -> Collections.emptySet();
         };
     }

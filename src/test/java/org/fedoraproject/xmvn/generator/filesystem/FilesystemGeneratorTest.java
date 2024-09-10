@@ -1,11 +1,12 @@
 package org.fedoraproject.xmvn.generator.filesystem;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
@@ -13,12 +14,14 @@ import org.fedoraproject.xmvn.generator.Collector;
 public class FilesystemGeneratorTest {
     private Collector collector;
     private BuildContext context;
+    @TempDir
+    private Path br;
 
     @BeforeEach
     public void setUp() {
         collector = EasyMock.createMock(Collector.class);
         context = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(context.eval("%{buildroot}")).andReturn("/some/buildroot").anyTimes();
+        EasyMock.expect(context.eval("%{buildroot}")).andReturn(br.toString()).anyTimes();
     }
 
     private void expectRequires(Path filePath, String req) {
@@ -26,35 +29,38 @@ public class FilesystemGeneratorTest {
         EasyMock.expectLastCall();
     }
 
-    private void performTest(Path jarPath) {
+    private void performTest(Path path) throws Exception {
+        Files.createDirectories(path.getParent());
+        Files.createFile(path);
         EasyMock.replay(collector, context);
-        new FilesystemGenerator(context).generate(List.of(jarPath), collector);
+        new FilesystemGenerator(context).generate(collector);
         EasyMock.verify(collector, context);
     }
 
     @Test
-    public void testJar() {
-        Path jarPath = Path.of("/some/buildroot/usr/share/java/foo.jar");
-        expectRequires(jarPath, "javapackages-filesystem");
-        performTest(jarPath);
+    public void testJar() throws Exception {
+        Path path = br.resolve("usr/share/java/foo.jar");
+        expectRequires(path, "javapackages-filesystem");
+        performTest(path);
     }
 
     @Test
-    public void testJavadoc() {
-        Path jarPath = Path.of("/some/buildroot/usr/share/javadoc/foo/index.html");
-        expectRequires(jarPath, "javapackages-filesystem");
-        performTest(jarPath);
+    public void testJavadoc() throws Exception {
+        Path path = br.resolve("usr/share/javadoc/foo/index.html");
+        expectRequires(path.getParent(), "javapackages-filesystem");
+        expectRequires(path, "javapackages-filesystem");
+        performTest(path);
     }
 
     @Test
-    public void testNonJava() {
-        Path jarPath = Path.of("/some/buildroot/usr/bin/foo");
-        performTest(jarPath);
+    public void testNonJava() throws Exception {
+        Path path = br.resolve("usr/bin/foo");
+        performTest(path);
     }
 
     @Test
-    public void testDirectoryItself() {
-        Path jarPath = Path.of("/some/buildroot/usr/share/java");
-        performTest(jarPath);
+    public void testDirectoryItself() throws Exception {
+        Path path = br.resolve("usr/share/java");
+        performTest(path);
     }
 }

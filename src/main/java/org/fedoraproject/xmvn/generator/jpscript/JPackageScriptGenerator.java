@@ -1,9 +1,10 @@
 package org.fedoraproject.xmvn.generator.jpscript;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
@@ -17,19 +18,18 @@ class JPackageScriptGenerator implements Generator {
     }
 
     @Override
-    public void generate(List<Path> filePaths, Collector collector) {
+    public void generate(Collector collector) {
         Path buildRoot = Path.of(context.eval("%{buildroot}"));
         Path binDir = buildRoot.resolve("usr/bin");
-        for (Path filePath : filePaths) {
-            if (filePath.getParent().equals(binDir) && Files.isRegularFile(filePath)) {
-                try {
+        if (Files.isDirectory(binDir)) {
+            try (Stream<Path> filePaths = Files.find(binDir, 1, (path, attr) -> attr.isRegularFile())) {
+                for (Path filePath : filePaths.toList()) {
                     if (Files.readString(filePath).contains("\n. /usr/share/java-utils/java-functions\n")) {
                         collector.addRequires(filePath, "javapackages-tools");
                     }
-                } catch (IOException e) {
-                    // Print the exception trace, ignore it otherwise
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         }
     }

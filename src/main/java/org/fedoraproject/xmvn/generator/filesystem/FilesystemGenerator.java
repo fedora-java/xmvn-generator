@@ -1,8 +1,12 @@
 package org.fedoraproject.xmvn.generator.filesystem;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
@@ -16,7 +20,7 @@ class FilesystemGenerator implements Generator {
     }
 
     @Override
-    public void generate(List<Path> filePaths, Collector collector) {
+    public void generate(Collector collector) {
         Path buildRoot = Path.of(context.eval("%{buildroot}"));
         List<Path> prefixes = new ArrayList<>();
         prefixes.add(buildRoot.resolve("etc/java"));
@@ -34,11 +38,15 @@ class FilesystemGenerator implements Generator {
         prefixes.add(buildRoot.resolve("usr/share/jvm-common"));
         prefixes.add(buildRoot.resolve("usr/share/maven-metadata"));
         prefixes.add(buildRoot.resolve("usr/share/maven-poms"));
-        for (Path filePath : filePaths) {
-            for (Path prefix : prefixes) {
-                if (filePath.getParent().startsWith(prefix)) {
-                    collector.addRequires(filePath, "javapackages-filesystem");
-                    break;
+        for (Path prefix : prefixes) {
+            if (Files.isDirectory(prefix)) {
+                try (Stream<Path> filePaths = Files.find(prefix, Integer.MAX_VALUE,
+                        (path, attr) -> !path.equals(prefix))) {
+                    for (Path filePath : filePaths.toList()) {
+                        collector.addRequires(filePath, "javapackages-filesystem");
+                    }
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
                 }
             }
         }
