@@ -28,6 +28,12 @@ public class Logger {
         }
     }
 
+    private static void flush() {
+        if (debugEnabled) {
+            System.err.flush();
+        }
+    }
+
     public static void debug(String msg) {
         int n = msg.length();
         if (n <= BOX_WIDTH - 4) {
@@ -47,5 +53,6 @@ public class Logger {
 
     public static void finishLogging() {
         Logger.print(BOX_BOTTOM_LEFT + repeat(BOX_BORDER_HORIZONTAL, BOX_WIDTH - 2) + BOX_BOTTOM_RIGHT);
+        flush();
     }
 }
