@@ -17,12 +17,12 @@
 #  * org.fedoraproject.xmvn.generator.filesystem.FilesystemGeneratorFactory
 #  * org.fedoraproject.xmvn.generator.jpscript.JPackageScriptGeneratorFactory
 #  * org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
-%__xmvngen_provides_generators %{nil}
-%__xmvngen_requires_generators %{nil}
+%__xmvngen_provides_generators org.fedoraproject.xmvn.generator.filesystem.FilesystemGeneratorFactory org.fedoraproject.xmvn.generator.jpscript.JPackageScriptGeneratorFactory org.fedoraproject.xmvn.generator.jpms.JPMSGeneratorFactory
+%__xmvngen_requires_generators org.fedoraproject.xmvn.generator.filesystem.FilesystemGeneratorFactory org.fedoraproject.xmvn.generator.jpscript.JPackageScriptGeneratorFactory
 
 # Specify which post-install hooks should be ran.
 # Value should be a space-separated list of qualified class names of
 # hook factories (classes implementing HookFactory interface).
 # Available hook factories are:
 #  * org.fedoraproject.xmvn.generator.transformer.TransformerHookFactory
-%__xmvngen_post_install_hooks %{nil}
+%__xmvngen_post_install_hooks org.fedoraproject.xmvn.generator.transformer.TransformerHookFactory
