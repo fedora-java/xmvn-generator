@@ -1,6 +1,6 @@
 # Debug enable flag.
 # Setting this to non-empty value enables debugging output.
-%__xmvngen_debug %{nil}
+%__xmvngen_debug 1
 
 # Path to JVM library (libjvm.so).  Java 21 or newer is required.
 %__xmvngen_libjvm %{_jvmdir}/jre-21-openjdk/lib/server/libjvm.so
