@@ -24,8 +24,12 @@ class JPackageScriptGenerator implements Generator {
         if (Files.isDirectory(binDir)) {
             try (Stream<Path> filePaths = Files.find(binDir, 1, (path, attr) -> attr.isRegularFile())) {
                 for (Path filePath : filePaths.toList()) {
-                    if (Files.readString(filePath).contains("\n. /usr/share/java-utils/java-functions\n")) {
+                    String content = Files.readString(filePath);
+                    if (content.contains("\n. /usr/share/java-utils/java-functions\n")) {
                         collector.addRequires(filePath, "javapackages-tools");
+                    }
+                    if (content.contains("\nexport JAVA_HOME=\"/usr/lib/jvm/jre-21-openjdk\"\n")) {
+                        collector.addRequires(filePath, "java-21-openjdk-headless");
                     }
                 }
             } catch (IOException e) {
