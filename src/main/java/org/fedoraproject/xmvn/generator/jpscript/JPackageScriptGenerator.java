@@ -28,7 +28,7 @@ class JPackageScriptGenerator implements Generator {
                     if (content.contains("\n. /usr/share/java-utils/java-functions\n")) {
                         collector.addRequires(filePath, "javapackages-tools");
                     }
-                    if (content.contains("\nexport JAVA_HOME=\"/usr/lib/jvm/jre-21-openjdk\"\n")) {
+                    if (content.contains("\nexport JAVA_HOME=\"${JAVA_HOME:-/usr/lib/jvm/jre-21-openjdk}\"\n")) {
                         collector.addRequires(filePath, "java-21-openjdk-headless");
                     }
                 }
