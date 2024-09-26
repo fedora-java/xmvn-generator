@@ -12,12 +12,15 @@ import java.util.zip.GZIPOutputStream;
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import org.fedoraproject.xmvn.artifact.DefaultArtifact;
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
+import org.fedoraproject.xmvn.locator.ServiceLocatorFactory;
+import org.fedoraproject.xmvn.metadata.MetadataResolver;
 import org.fedoraproject.xmvn.resolver.ResolutionRequest;
 import org.fedoraproject.xmvn.resolver.ResolutionResult;
 import org.fedoraproject.xmvn.resolver.Resolver;
@@ -25,6 +28,7 @@ import org.fedoraproject.xmvn.resolver.Resolver;
 public class MavenGeneratorTest {
     private Collector collector;
     private BuildContext context;
+    private MetadataResolver metadataResolver;
     private Resolver resolver;
     @TempDir
     private Path br;
@@ -34,6 +38,7 @@ public class MavenGeneratorTest {
         collector = EasyMock.createMock(Collector.class);
         context = EasyMock.createMock(BuildContext.class);
         resolver = EasyMock.createMock(Resolver.class);
+        metadataResolver = new ServiceLocatorFactory().createServiceLocator().getService(MetadataResolver.class);
     }
 
     private void addBrFile(String loc, String content) throws Exception {
@@ -85,7 +90,7 @@ public class MavenGeneratorTest {
     private void performTest() throws Exception {
         EasyMock.expect(context.eval("%{buildroot}")).andReturn(br.toString()).atLeastOnce();
         EasyMock.replay(collector, context, resolver);
-        new MavenGenerator(context, resolver).generate(collector);
+        new MavenGenerator(context, metadataResolver, resolver).generate(collector);
         EasyMock.verify(collector, context, resolver);
     }
 
@@ -145,6 +150,7 @@ public class MavenGeneratorTest {
         performTest();
     }
 
+    @Disabled("XMvn always ignores invalid metadata files")
     @Test
     public void testEmptyMetadataFile() throws Exception {
         addMd("");
@@ -156,6 +162,7 @@ public class MavenGeneratorTest {
         }
     }
 
+    @Disabled("XMvn always ignores invalid metadata files")
     @Test
     public void testInvalidMetadata() throws Exception {
         addMd("""
@@ -169,6 +176,7 @@ public class MavenGeneratorTest {
         }
     }
 
+    @Disabled("XMvn always ignores invalid metadata files")
     @Test
     public void testMalformedXmlMetadata() throws Exception {
         addMd("<trololololo");

@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.fedoraproject.xmvn</groupId>
       <artifactId>xmvn-api</artifactId>
-      <version>4.2.0</version>
+      <version>4.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.fedoraproject.xmvn</groupId>
       <artifactId>xmvn-core</artifactId>
-      <version>4.2.0</version>
+      <version>4.3.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

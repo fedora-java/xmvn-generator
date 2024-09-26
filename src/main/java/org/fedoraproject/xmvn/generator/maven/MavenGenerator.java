@@ -1,10 +1,6 @@
 package org.fedoraproject.xmvn.generator.maven;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -17,10 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.maven.model.Extension;
 import org.apache.maven.model.Model;
@@ -34,13 +26,14 @@ import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
 import org.fedoraproject.xmvn.generator.logging.Logger;
+import org.fedoraproject.xmvn.locator.ServiceLocator;
 import org.fedoraproject.xmvn.locator.ServiceLocatorFactory;
 import org.fedoraproject.xmvn.metadata.ArtifactAlias;
 import org.fedoraproject.xmvn.metadata.ArtifactMetadata;
 import org.fedoraproject.xmvn.metadata.Dependency;
-import org.fedoraproject.xmvn.metadata.PackageMetadata;
+import org.fedoraproject.xmvn.metadata.MetadataRequest;
+import org.fedoraproject.xmvn.metadata.MetadataResolver;
 import org.fedoraproject.xmvn.metadata.SkippedArtifactMetadata;
-import org.fedoraproject.xmvn.metadata.io.stax.MetadataStaxReader;
 import org.fedoraproject.xmvn.resolver.ResolutionRequest;
 import org.fedoraproject.xmvn.resolver.ResolutionResult;
 import org.fedoraproject.xmvn.resolver.Resolver;
@@ -72,39 +65,20 @@ class UniqueArtifact {
 
 class MavenGenerator implements Generator {
     private final BuildContext context;
+    private final MetadataResolver metadataResolver;
     private final Resolver resolver;
 
-    MavenGenerator(BuildContext context, Resolver resolver) {
+    MavenGenerator(BuildContext context, MetadataResolver metadataResolver, Resolver resolver) {
         this.context = context;
+        this.metadataResolver = metadataResolver;
         this.resolver = resolver;
     }
 
     public MavenGenerator(BuildContext context) {
-        this(context, new ServiceLocatorFactory().createServiceLocator().getService(Resolver.class));
-    }
-
-    private boolean isCompressed(BufferedInputStream bis) throws IOException {
-        try {
-            bis.mark(2);
-            DataInputStream ois = new DataInputStream(bis);
-            int magic = Short.reverseBytes(ois.readShort()) & 0xFFFF;
-            return magic == GZIPInputStream.GZIP_MAGIC;
-        } catch (EOFException e) {
-            return false;
-        } finally {
-            bis.reset();
-        }
-    }
-
-    private PackageMetadata readMetadata(Path path) throws IOException, XMLStreamException {
-        try (InputStream fis = Files.newInputStream(path)) {
-            try (BufferedInputStream bis = new BufferedInputStream(fis, 128)) {
-                try (InputStream is = isCompressed(bis) ? new GZIPInputStream(bis) : bis) {
-                    MetadataStaxReader reader = new MetadataStaxReader();
-                    return reader.read(is);
-                }
-            }
-        }
+        ServiceLocator serviceLocator = new ServiceLocatorFactory().createServiceLocator();
+        this.context = context;
+        this.metadataResolver = serviceLocator.getService(MetadataResolver.class);
+        this.resolver = serviceLocator.getService(Resolver.class);
     }
 
     private String formatDep(Artifact art, String pkgver, String ns) {
@@ -188,48 +162,42 @@ class MavenGenerator implements Generator {
         Set<Artifact> skipped = new LinkedHashSet<>();
         List<UniqueArtifact> umds = new ArrayList<>();
         if (Files.isDirectory(prefix)) {
-            try (Stream<Path> filePaths = Files.find(prefix, 1, (path, attr) -> attr.isRegularFile())) {
-                for (Path filePath : filePaths.toList()) {
-                    PackageMetadata pmd = readMetadata(filePath);
-                    Subpackage md = new Subpackage(filePath);
-                    for (ArtifactMetadata amd : pmd.getArtifacts()) {
-                        UniqueArtifact umd = new UniqueArtifact(md, amd);
-                        umds.add(umd);
-                        List<Artifact> arts = new ArrayList<>();
-                        arts.add(amd.toArtifact());
-                        for (ArtifactAlias alias : amd.getAliases()) {
-                            arts.add(new DefaultArtifact(alias.getGroupId(), alias.getArtifactId(),
-                                    alias.getExtension(), alias.getClassifier(), Artifact.DEFAULT_VERSION));
+            MetadataRequest mdReq = new MetadataRequest(List.of(prefix.toString()));
+            metadataResolver.resolveMetadata(mdReq).getPackageMetadataMap().forEach((filePath, pmd) -> {
+                Subpackage md = new Subpackage(filePath);
+                for (ArtifactMetadata amd : pmd.getArtifacts()) {
+                    UniqueArtifact umd = new UniqueArtifact(md, amd);
+                    umds.add(umd);
+                    List<Artifact> arts = new ArrayList<>();
+                    arts.add(amd.toArtifact());
+                    for (ArtifactAlias alias : amd.getAliases()) {
+                        arts.add(new DefaultArtifact(alias.getGroupId(), alias.getArtifactId(), alias.getExtension(),
+                                alias.getClassifier(), Artifact.DEFAULT_VERSION));
+                    }
+                    umd.pom = true;
+                    for (Artifact art : arts) {
+                        if (!"pom".equals(art.getExtension())) {
+                            umd.pom = false;
                         }
-                        umd.pom = true;
-                        for (Artifact art : arts) {
-                            if (!"pom".equals(art.getExtension())) {
-                                umd.pom = false;
+                        if (amd.getCompatVersions().isEmpty()) {
+                            umd.artifacts.add(art.setVersion(Artifact.DEFAULT_VERSION));
+                        } else {
+                            for (String ver : amd.getCompatVersions()) {
+                                umd.artifacts.add(art.setVersion(ver));
                             }
-                            if (amd.getCompatVersions().isEmpty()) {
-                                umd.artifacts.add(art.setVersion(Artifact.DEFAULT_VERSION));
-                            } else {
-                                for (String ver : amd.getCompatVersions()) {
-                                    umd.artifacts.add(art.setVersion(ver));
-                                }
-                            }
-                        }
-                        md.pomOnly &= umd.pom;
-                        for (Artifact vart : umd.artifacts) {
-                            myArtifacts.computeIfAbsent(vart, x -> new ArrayList<>()).add(umd);
                         }
                     }
-                    for (SkippedArtifactMetadata smd : pmd.getSkippedArtifacts()) {
-                        Artifact sart = new DefaultArtifact(smd.getGroupId(), smd.getArtifactId(), smd.getExtension(),
-                                smd.getClassifier(), Artifact.DEFAULT_VERSION);
-                        skipped.add(sart);
+                    md.pomOnly &= umd.pom;
+                    for (Artifact vart : umd.artifacts) {
+                        myArtifacts.computeIfAbsent(vart, x -> new ArrayList<>()).add(umd);
                     }
                 }
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            } catch (XMLStreamException e) {
-                throw new RuntimeException(e);
-            }
+                for (SkippedArtifactMetadata smd : pmd.getSkippedArtifacts()) {
+                    Artifact sart = new DefaultArtifact(smd.getGroupId(), smd.getArtifactId(), smd.getExtension(),
+                            smd.getClassifier(), Artifact.DEFAULT_VERSION);
+                    skipped.add(sart);
+                }
+            });
         }
         for (UniqueArtifact umd : umds) {
             for (Artifact art : umd.artifacts) {
