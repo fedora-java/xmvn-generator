@@ -16,7 +16,6 @@
 package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class DepsCollector implements Collector {
         return switch (kind) {
             case "provides" -> provides.computeIfAbsent(filePath, x -> new TreeSet<>());
             case "requires" -> requires.computeIfAbsent(filePath, x -> new TreeSet<>());
-            default -> Collections.emptySet();
+            default -> Set.of();
         };
     }
 }
