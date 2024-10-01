@@ -14,18 +14,13 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  `-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.fedoraproject.xmvn</groupId>
   <artifactId>xmvn-generator</artifactId>
   <version>2.0.0</version>
   <name>XMvn Generator</name>
-  <description>
-    XMvn Generator is a dependency generator RPM Package Manager.
-  </description>
+  <description>XMvn Generator is a dependency generator RPM Package Manager.</description>
   <url>https://github.com/fedora-java/xmvn-generator</url>
   <inceptionYear>2023</inceptionYear>
   <organization>
@@ -51,16 +46,16 @@
   <mailingLists>
     <mailingList>
       <name>Fedora Java development List</name>
-      <post>java-devel@lists.fedoraproject.org</post>
-      <archive>http://lists.fedoraproject.org/pipermail/java-devel/</archive>
       <subscribe>https://admin.fedoraproject.org/mailman/listinfo/java-devel</subscribe>
       <unsubscribe>https://admin.fedoraproject.org/mailman/listinfo/java-devel</unsubscribe>
+      <post>java-devel@lists.fedoraproject.org</post>
+      <archive>http://lists.fedoraproject.org/pipermail/java-devel/</archive>
     </mailingList>
   </mailingLists>
   <scm>
-    <url>https://github.com/fedora-java/xmvn-generator</url>
     <connection>scm:git:https://github.com/fedora-java/xmvn-generator.git</connection>
     <developerConnection>scm:git:git@github.com:fedora-java/xmvn-generator.git</developerConnection>
+    <url>https://github.com/fedora-java/xmvn-generator</url>
   </scm>
   <issueManagement>
     <system>Github</system>
@@ -131,6 +126,9 @@
         <version>3.1.0</version>
         <executions>
           <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
             <phase>compile</phase>
             <configuration>
               <target>
@@ -152,9 +150,6 @@
                 </exec>
               </target>
             </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
