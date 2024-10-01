@@ -22,7 +22,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -39,7 +38,7 @@ public class Callback {
     }
 
     public static Callback setUp(Runnable delegate) throws IOException {
-        Path javaHome = Paths.get(System.getProperty("java.home"));
+        Path javaHome = Path.of(System.getProperty("java.home"));
         Path javaCmd = javaHome.resolve("bin").resolve("java");
         Path tempDir = Files.createTempDirectory("xmvngen-");
         Path socketPath = tempDir.resolve("socket");

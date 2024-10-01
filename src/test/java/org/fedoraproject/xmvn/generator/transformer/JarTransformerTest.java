@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
@@ -53,11 +52,11 @@ public class JarTransformerTest {
     }
 
     private void prepare(String testResourceName) throws Exception {
-        testResource = Paths.get("src/test/resources").resolve(testResourceName);
+        testResource = Path.of("src/test/resources").resolve(testResourceName);
         assertTrue(Files.isRegularFile(testResource));
         testJar = workDir.resolve("test.jar");
         Files.copy(testResource, testJar, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
-        backupPath = Paths.get(testJar + "-backup");
+        backupPath = Path.of(testJar + "-backup");
     }
 
     private void performTest() throws Exception {

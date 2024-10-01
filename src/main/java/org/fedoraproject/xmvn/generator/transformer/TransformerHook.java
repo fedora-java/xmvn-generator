@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -37,7 +36,7 @@ class TransformerHook implements Hook {
     }
 
     public void addDirectoryPrefix(Path prefix) {
-        prefixes.add(buildRoot.resolve(Paths.get("/").relativize(prefix)));
+        prefixes.add(buildRoot.resolve(Path.of("/").relativize(prefix)));
     }
 
     @Override
@@ -57,7 +56,7 @@ class TransformerHook implements Hook {
                 }
                 for (Path filePath : javaFiles) {
                     JarTransformer jarTransformer = new JarTransformer(manifestTransformer);
-                    Logger.debug("injecting manifest into " + Paths.get("/").resolve(buildRoot.relativize(filePath)));
+                    Logger.debug("injecting manifest into " + Path.of("/").resolve(buildRoot.relativize(filePath)));
                     try {
                         jarTransformer.transformJar(filePath);
                     } catch (IOException e) {
