@@ -16,7 +16,6 @@
 package org.fedoraproject.xmvn.generator.transformer;
 
 import java.util.jar.Manifest;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class ManifestInjector implements ManifestTransformer {

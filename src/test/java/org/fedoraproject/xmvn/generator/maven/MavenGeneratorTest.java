@@ -23,14 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
-
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
 import org.fedoraproject.xmvn.artifact.DefaultArtifact;
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
@@ -39,12 +33,17 @@ import org.fedoraproject.xmvn.metadata.MetadataResolver;
 import org.fedoraproject.xmvn.resolver.ResolutionRequest;
 import org.fedoraproject.xmvn.resolver.ResolutionResult;
 import org.fedoraproject.xmvn.resolver.Resolver;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class MavenGeneratorTest {
     private Collector collector;
     private BuildContext context;
     private MetadataResolver metadataResolver;
     private Resolver resolver;
+
     @TempDir
     private Path br;
 
@@ -116,7 +115,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testNoArtifacts() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <uuid>0ebc9caa-eb88-4c53-b371-72514294b535</uuid>
@@ -133,7 +133,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSimple() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -205,7 +206,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testCompressedMetadata() throws Exception {
-        String metadata = """
+        String metadata =
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -234,7 +236,8 @@ public class MavenGeneratorTest {
                 </metadata>""";
         Path gzPath = br.resolve("usr/share/maven-metadata/main.xml");
         Files.createDirectories(gzPath.getParent());
-        try (OutputStream os = Files.newOutputStream(gzPath); OutputStream zos = new GZIPOutputStream(os)) {
+        try (OutputStream os = Files.newOutputStream(gzPath);
+                OutputStream zos = new GZIPOutputStream(os)) {
             zos.write(metadata.getBytes(StandardCharsets.UTF_8));
         }
         expectProv("ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
@@ -244,7 +247,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSingleNamespace() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -301,7 +305,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testMultiNamespace() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -358,7 +363,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testMultipleMetadata() throws Exception {
-        addMd("md1", """
+        addMd(
+                "md1",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -387,7 +394,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("md1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("md1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        addMd("md2", """
+        addMd(
+                "md2",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -421,7 +430,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSystemVersion() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>4320148235932</uuid>
                     <artifacts>
@@ -450,7 +460,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testExtensionWar() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -473,7 +484,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testExtensionJar() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -495,7 +507,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testExtensionPom() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -516,7 +529,8 @@ public class MavenGeneratorTest {
     // Test for https://bugzilla.redhat.com/show_bug.cgi?id=1017271
     @Test
     public void testNamespaceRhbz1017271() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -536,7 +550,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testCompatVersion() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -558,7 +573,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testAlias() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -585,7 +601,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testAlias2() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -626,7 +643,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testCompatAlias() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -659,7 +677,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testExtensionJarExplicit() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <?xml version="1.0" ?>
                 <ns1:metadata xmlns:ns1="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                    <ns1:artifacts>
@@ -692,7 +711,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testDashesInVersion() throws Exception {
-        addMd("F", """
+        addMd(
+                "F",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -724,7 +745,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api) = 1.alpha.2");
         expectReq("F", "mvn(org.sonatype.sisu:sisu-guice::no_aop:)");
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -759,7 +782,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testRequireSimple() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -806,7 +830,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testRequireParent() throws Exception {
-        addMd("R1", """
+        addMd(
+                "R1",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -852,7 +878,9 @@ public class MavenGeneratorTest {
         expectProv("R1", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.B60.25.p2");
         expectProv("R1", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
         expectReq("R1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory)");
-        addMd("R2", """
+        addMd(
+                "R2",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -874,7 +902,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testRequireMulti() throws Exception {
-        addMd("R0", """
+        addMd(
+                "R0",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -946,7 +976,9 @@ public class MavenGeneratorTest {
         expectReq("R0", "ns-mvn(org.codehaus.plexus:plexus-ant-factory)");
         expectReq("R0", "ns-mvn(codehaus:plexus-utils) = 1.2");
         expectReq("R0", "mvn(org.apache.maven.wagon:wagon-provider-api::test-jar:)");
-        addMd("R1", """
+        addMd(
+                "R1",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -975,7 +1007,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("R1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("R1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        addMd("R2", """
+        addMd(
+                "R2",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1004,7 +1038,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("R2", "ns-mvn(org.apache.maven.plugins:maven-idea-plugin:1.5) = 1.4");
         expectProv("R2", "ns-mvn(org.apache.maven.plugins:maven-idea-plugin:pom:1.5) = 1.4");
-        addMd("R3", """
+        addMd(
+                "R3",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1047,7 +1083,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testRequireMultiNamespace() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1248,7 +1285,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testRequireMultiVersioned() throws Exception {
-        addMd("F1", """
+        addMd(
+                "F1",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1277,7 +1316,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("F1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        addMd("F2", """
+        addMd(
+                "F2",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1304,7 +1345,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F2", "mvn(org.apache.maven.plugins:maven-idea-plugin:1.5) = 1.4");
         expectProv("F2", "mvn(org.apache.maven.plugins:maven-idea-plugin:pom:1.5) = 1.4");
-        addMd("F3", """
+        addMd(
+                "F3",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1342,7 +1385,9 @@ public class MavenGeneratorTest {
         expectProv("F3", "ns-mvn(codehaus:plexus-utils) = 1.2");
         expectProv("F3", "ns-mvn(codehaus:plexus-utils:pom:) = 1.2");
         expectReq("F3", "mvn(org.apache.maven:maven-project)");
-        addMd("F4", """
+        addMd(
+                "F4",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1390,7 +1435,9 @@ public class MavenGeneratorTest {
         expectProv("F4", "ns-mvn(codehaus:plexus-cipher:pom:1.0) = 1.1");
         expectProv("F4", "ns-mvn(codehaus:plexus-cipher:pom:1.1) = 1.1");
         expectReq("F4", "mvn(org.apache.maven:maven-project)");
-        addMd("RR", """
+        addMd(
+                "RR",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1509,7 +1556,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testMixed() throws Exception {
-        addMd("F1", """
+        addMd(
+                "F1",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1538,7 +1587,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("F1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        addMd("F2", """
+        addMd(
+                "F2",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1561,7 +1612,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F2", "ns-mvn(org.apache.maven.plugins:maven-idea-plugin) = 1.4");
         expectProv("F2", "ns-mvn(org.apache.maven.plugins:maven-idea-plugin:pom:) = 1.4");
-        addMd("F3", """
+        addMd(
+                "F3",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1599,7 +1652,9 @@ public class MavenGeneratorTest {
         expectProv("F3", "ns-mvn(codehaus:plexus-utils) = 1.2");
         expectProv("F3", "ns-mvn(codehaus:plexus-utils:pom:) = 1.2");
         expectReq("F3", "mvn(org.apache.maven:maven-project)");
-        addMd("RR", """
+        addMd(
+                "RR",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -1687,7 +1742,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSimpleSubpackage() throws Exception {
-        addMd("F", """
+        addMd(
+                "F",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1714,7 +1771,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api) = 3.2.1");
         expectReq("F", "mvn(org.sonatype.sisu:sisu-guice)");
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1744,7 +1803,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSimpleSubpackage2() throws Exception {
-        addMd("F", """
+        addMd(
+                "F",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1771,7 +1832,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api) = 3.2.1");
         expectReq("F", "mvn(org.sonatype.sisu:sisu-guice)");
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1809,7 +1872,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSimpleSubpackage3() throws Exception {
-        addMd("F", """
+        addMd(
+                "F",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1841,7 +1906,9 @@ public class MavenGeneratorTest {
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api:3.2.0) = 3.2.1");
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api:3.2.1) = 3.2.1");
         expectReq("F", "mvn(org.sonatype.sisu:sisu-guice)");
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1877,7 +1944,9 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSimpleSubpackage4() throws Exception {
-        addMd("F", """
+        addMd(
+                "F",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1909,7 +1978,9 @@ public class MavenGeneratorTest {
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api:3.2.0) = 3.2.1");
         expectProv("F", "mvn(org.apache.maven:maven-plugin-api:3.2.1) = 3.2.1");
         expectReq("F", "mvn(org.sonatype.sisu:sisu-guice)");
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1945,7 +2016,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testSelfArtifact() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                   <artifacts>
@@ -1980,7 +2052,9 @@ public class MavenGeneratorTest {
     // https://bugzilla.redhat.com/show_bug.cgi?id=1012980
     @Test
     public void testRequireSkippedRhbz1012980() throws Exception {
-        addMd("R", """
+        addMd(
+                "R",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2008,8 +2082,11 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("R", "ns-mvn(g:a1) = 1.2");
         expectReq("R", "ns-mvn(g:a2) = 1.2");
-        EasyMock.expect(context.eval("%{error:Dependency on skipped artifact: g:skipped:jar:UNKNOWN}")).andReturn(null);
-        addMd("S", """
+        EasyMock.expect(context.eval("%{error:Dependency on skipped artifact: g:skipped:jar:UNKNOWN}"))
+                .andReturn(null);
+        addMd(
+                "S",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235933</uuid>
                     <artifacts>
@@ -2035,7 +2112,9 @@ public class MavenGeneratorTest {
     // https://bugzilla.redhat.com/show_bug.cgi?id=1017701#c2
     @Test
     public void testRhbz1017701() throws Exception {
-        addMd("API", """
+        addMd(
+                "API",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.0.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2058,7 +2137,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("API", "maven31-mvn(org.eclipse.aether:aether-api) = 0.9.0.M3");
         expectProv("API", "maven31-mvn(org.eclipse.aether:aether-api:pom:) = 0.9.0.M3");
-        addMd("SPI", """
+        addMd(
+                "SPI",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.0.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2103,7 +2184,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testUnknownDep() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2148,15 +2230,16 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        EasyMock.expect(
-                context.eval("%{error:Dependency on unresolved artifact: org.apache.maven:maven-project:jar:2.2.1}"))
+        EasyMock.expect(context.eval(
+                        "%{error:Dependency on unresolved artifact: org.apache.maven:maven-project:jar:2.2.1}"))
                 .andReturn(null);
         performTest();
     }
 
     @Test
     public void testOptionalDep() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2198,7 +2281,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomDeps() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2214,7 +2298,9 @@ public class MavenGeneratorTest {
                         </artifact>
                     </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/pom.xml", """
+        addBrFile(
+                "usr/share/maven-poms/pom.xml",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <groupId>org.kohsuke</groupId>
@@ -2260,7 +2346,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomDepParent() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2276,7 +2363,9 @@ public class MavenGeneratorTest {
                         </artifact>
                     </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/pom.xml", """
+        addBrFile(
+                "usr/share/maven-poms/pom.xml",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <parent>
@@ -2295,7 +2384,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomDepsNonPomPackaging() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2311,7 +2401,9 @@ public class MavenGeneratorTest {
                         </artifact>
                     </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/pom.xml", """
+        addBrFile(
+                "usr/share/maven-poms/pom.xml",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <parent>
@@ -2328,7 +2420,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomDepsWithParent() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2344,7 +2437,9 @@ public class MavenGeneratorTest {
                         </artifact>
                     </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/pom.xml", """
+        addBrFile(
+                "usr/share/maven-poms/pom.xml",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <parent>
@@ -2375,7 +2470,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomDepsSubpackage() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <!-- POM-only metadata -->
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
@@ -2392,7 +2488,9 @@ public class MavenGeneratorTest {
                         </artifact>
                     </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/pom.xml", """
+        addBrFile(
+                "usr/share/maven-poms/pom.xml",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <parent>
@@ -2419,7 +2517,9 @@ public class MavenGeneratorTest {
         expectProv("mvn(gid:aid:pom:1.0) = 1.1");
         expectReq("mvn(extension:from-subpackage) = 1.1");
         expectReq("mvn(ppom:parent-pom:pom:)");
-        addMd("sub", """
+        addMd(
+                "sub",
+                """
                 <metadata xmlns="http://fedorahosted.org/xmvn/METADATA/2.3.0">
                     <uuid>432048235932</uuid>
                     <artifacts>
@@ -2439,7 +2539,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomSelfRequires() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata>
                   <artifacts>
                     <artifact>
@@ -2458,7 +2559,9 @@ public class MavenGeneratorTest {
                     </artifact>
                   </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/apache-parent/apache.pom", """
+        addBrFile(
+                "usr/share/maven-poms/apache-parent/apache.pom",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <groupId>org.apache</groupId>
@@ -2466,7 +2569,9 @@ public class MavenGeneratorTest {
                   <version>33</version>
                   <packaging>pom</packaging>
                 </project>""");
-        addBrFile("usr/share/maven-poms/apache-parent/docs.pom", """
+        addBrFile(
+                "usr/share/maven-poms/apache-parent/docs.pom",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <parent>
@@ -2484,7 +2589,8 @@ public class MavenGeneratorTest {
 
     @Test
     public void testPomRequiresJar() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <metadata>
                   <artifacts>
                     <artifact>
@@ -2503,7 +2609,9 @@ public class MavenGeneratorTest {
                     </artifact>
                   </artifacts>
                 </metadata>""");
-        addBrFile("usr/share/maven-poms/child.pom", """
+        addBrFile(
+                "usr/share/maven-poms/child.pom",
+                """
                 <project>
                   <modelVersion>4.0.0</modelVersion>
                   <packaging>pom</packaging>

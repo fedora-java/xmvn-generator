@@ -28,13 +28,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.maven.model.Extension;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import org.fedoraproject.xmvn.artifact.Artifact;
 import org.fedoraproject.xmvn.artifact.DefaultArtifact;
 import org.fedoraproject.xmvn.generator.BuildContext;
@@ -186,8 +184,12 @@ class MavenGenerator implements Generator {
                     List<Artifact> arts = new ArrayList<>();
                     arts.add(amd.toArtifact());
                     for (ArtifactAlias alias : amd.getAliases()) {
-                        arts.add(new DefaultArtifact(alias.getGroupId(), alias.getArtifactId(), alias.getExtension(),
-                                alias.getClassifier(), Artifact.DEFAULT_VERSION));
+                        arts.add(new DefaultArtifact(
+                                alias.getGroupId(),
+                                alias.getArtifactId(),
+                                alias.getExtension(),
+                                alias.getClassifier(),
+                                Artifact.DEFAULT_VERSION));
                     }
                     umd.pom = true;
                     for (Artifact art : arts) {
@@ -204,12 +206,18 @@ class MavenGenerator implements Generator {
                     }
                     md.pomOnly &= umd.pom;
                     for (Artifact vart : umd.artifacts) {
-                        myArtifacts.computeIfAbsent(vart, x -> new ArrayList<>()).add(umd);
+                        myArtifacts
+                                .computeIfAbsent(vart, x -> new ArrayList<>())
+                                .add(umd);
                     }
                 }
                 for (SkippedArtifactMetadata smd : pmd.getSkippedArtifacts()) {
-                    Artifact sart = new DefaultArtifact(smd.getGroupId(), smd.getArtifactId(), smd.getExtension(),
-                            smd.getClassifier(), Artifact.DEFAULT_VERSION);
+                    Artifact sart = new DefaultArtifact(
+                            smd.getGroupId(),
+                            smd.getArtifactId(),
+                            smd.getExtension(),
+                            smd.getClassifier(),
+                            Artifact.DEFAULT_VERSION);
                     skipped.add(sart);
                 }
             });
@@ -263,7 +271,8 @@ class MavenGenerator implements Generator {
                         }
                     }
                 } catch (IOException | XmlPullParserException e) {
-                    try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
+                    try (StringWriter sw = new StringWriter();
+                            PrintWriter pw = new PrintWriter(sw)) {
                         sw.append("Unable to generate POM dependencies: ");
                         e.printStackTrace(pw);
                         Logger.debug(sw.toString());

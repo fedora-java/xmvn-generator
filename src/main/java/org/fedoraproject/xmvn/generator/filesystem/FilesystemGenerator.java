@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
@@ -55,8 +54,8 @@ class FilesystemGenerator implements Generator {
         prefixes.add(buildRoot.resolve("usr/share/maven-poms"));
         for (Path prefix : prefixes) {
             if (Files.isDirectory(prefix)) {
-                try (Stream<Path> filePaths = Files.find(prefix, Integer.MAX_VALUE,
-                        (path, attr) -> !path.equals(prefix))) {
+                try (Stream<Path> filePaths =
+                        Files.find(prefix, Integer.MAX_VALUE, (path, attr) -> !path.equals(prefix))) {
                     for (Path filePath : filePaths.toList()) {
                         collector.addRequires(filePath, "javapackages-filesystem");
                     }

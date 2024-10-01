@@ -18,11 +18,10 @@ package org.fedoraproject.xmvn.generator.jpms;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Generator;
 import org.fedoraproject.xmvn.generator.GeneratorFactory;
+import org.junit.jupiter.api.Test;
 
 public class JPMSGeneratorFactoryTest {
     @Test

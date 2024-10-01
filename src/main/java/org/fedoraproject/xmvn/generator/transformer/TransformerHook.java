@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.logging.Logger;
 
@@ -49,8 +48,11 @@ class TransformerHook implements Hook {
                     continue;
                 }
                 List<Path> javaFiles;
-                try (Stream<Path> paths = Files.find(prefix, 10,
-                        (p, bfa) -> bfa.isRegularFile() && p.getFileName().toString().endsWith(".jar"))) {
+                try (Stream<Path> paths = Files.find(
+                        prefix,
+                        10,
+                        (p, bfa) -> bfa.isRegularFile()
+                                && p.getFileName().toString().endsWith(".jar"))) {
                     javaFiles = paths.toList();
                 }
                 for (Path filePath : javaFiles) {

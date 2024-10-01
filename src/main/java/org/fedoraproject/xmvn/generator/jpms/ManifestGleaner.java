@@ -17,7 +17,6 @@ package org.fedoraproject.xmvn.generator.jpms;
 
 import java.nio.file.Path;
 import java.util.jar.Manifest;
-
 import org.fedoraproject.xmvn.generator.Collector;
 
 class ManifestGleaner {

@@ -17,12 +17,10 @@ package org.fedoraproject.xmvn.generator.jpms;
 
 import java.nio.file.Path;
 import java.util.jar.Manifest;
-
 import org.easymock.EasyMock;
+import org.fedoraproject.xmvn.generator.Collector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import org.fedoraproject.xmvn.generator.Collector;
 
 public class ManifestGleanerTest {
     private Collector collector;

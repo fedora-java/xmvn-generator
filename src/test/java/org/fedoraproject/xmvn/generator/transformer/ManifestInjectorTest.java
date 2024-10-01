@@ -18,11 +18,9 @@ package org.fedoraproject.xmvn.generator.transformer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.jar.Manifest;
-
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
+import org.junit.jupiter.api.Test;
 
 public class ManifestInjectorTest {
     @Test

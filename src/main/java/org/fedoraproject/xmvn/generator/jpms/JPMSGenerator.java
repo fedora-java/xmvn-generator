@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
@@ -46,13 +45,16 @@ class JPMSGenerator implements Generator {
         prefixes.add(buildRoot.resolve("usr/share/java"));
         for (Path prefix : prefixes) {
             if (Files.isDirectory(prefix)) {
-                try (Stream<Path> filePaths = Files.find(prefix, Integer.MAX_VALUE,
-                        (path, attr) -> attr.isRegularFile() && path.getFileName().toString().endsWith(".jar"))) {
+                try (Stream<Path> filePaths = Files.find(
+                        prefix,
+                        Integer.MAX_VALUE,
+                        (path, attr) -> attr.isRegularFile()
+                                && path.getFileName().toString().endsWith(".jar"))) {
                     for (Path filePath : filePaths.toList()) {
                         ManifestGleaner manifestGleaner = new ManifestGleaner(filePath, collector);
                         ModuleInfoGleaner moduleInfoGleaner = new ModuleInfoGleaner(filePath, collector);
-                        try (JarFile jarFile = new JarFile(filePath.toFile(), false, JarFile.OPEN_READ,
-                                JarFile.runtimeVersion())) {
+                        try (JarFile jarFile =
+                                new JarFile(filePath.toFile(), false, JarFile.OPEN_READ, JarFile.runtimeVersion())) {
                             manifestGleaner.glean(jarFile.getManifest());
                             Iterator<JarEntry> it = jarFile.versionedStream().iterator();
                             while (it.hasNext()) {

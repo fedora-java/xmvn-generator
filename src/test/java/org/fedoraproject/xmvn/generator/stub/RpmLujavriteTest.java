@@ -21,10 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Path;
-
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
+import org.junit.jupiter.api.Test;
 
 class RpmLujavriteStub {
     public static String stubMain(String arg) {

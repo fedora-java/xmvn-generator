@@ -26,25 +26,24 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-
 import org.easymock.EasyMock;
+import org.fedoraproject.xmvn.generator.Collector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import org.fedoraproject.xmvn.generator.Collector;
-
 public class ModuleInfoGleanerTest {
     @TempDir
     private Path srcDir;
+
     @TempDir
     private Path binDir;
+
     private final Deque<Path> modulePath = new ArrayDeque<>();
     private Collector collector;
     private Path filePath;
@@ -168,11 +167,11 @@ public class ModuleInfoGleanerTest {
             opts.add(modulePath.stream().map(Path::toString).collect(Collectors.joining(":")));
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null)) {
-                Iterable<? extends JavaFileObject> compilationUnits = fileManager
-                        .getJavaFileObjectsFromFiles(List.of(moduleInfoJava.toFile()));
+                Iterable<? extends JavaFileObject> compilationUnits =
+                        fileManager.getJavaFileObjectsFromFiles(List.of(moduleInfoJava.toFile()));
                 StringWriter compilerOutput = new StringWriter();
-                CompilationTask task = compiler.getTask(compilerOutput, fileManager, null, opts, null,
-                        compilationUnits);
+                CompilationTask task =
+                        compiler.getTask(compilerOutput, fileManager, null, opts, null, compilationUnits);
                 assertTrue(task.call(), "module-info compilation failed with output:\n" + compilerOutput);
             }
             modulePath.addFirst(outDir);

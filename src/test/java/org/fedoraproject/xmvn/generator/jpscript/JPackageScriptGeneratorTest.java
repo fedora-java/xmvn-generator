@@ -17,18 +17,17 @@ package org.fedoraproject.xmvn.generator.jpscript;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.easymock.EasyMock;
+import org.fedoraproject.xmvn.generator.BuildContext;
+import org.fedoraproject.xmvn.generator.Collector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import org.fedoraproject.xmvn.generator.BuildContext;
-import org.fedoraproject.xmvn.generator.Collector;
-
 public class JPackageScriptGeneratorTest {
     private Collector collector;
     private BuildContext context;
+
     @TempDir
     private Path br;
 

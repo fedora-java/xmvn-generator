@@ -17,7 +17,6 @@ package org.fedoraproject.xmvn.generator.transformer;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.HookFactory;

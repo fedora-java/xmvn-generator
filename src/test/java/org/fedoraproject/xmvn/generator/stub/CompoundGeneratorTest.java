@@ -26,15 +26,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
 import org.fedoraproject.xmvn.generator.GeneratorFactory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class TestGeneratorFactory1 implements GeneratorFactory {
     static Generator gen;
@@ -50,8 +48,8 @@ class TestGeneratorFactory2 implements GeneratorFactory {
     public Generator createGenerator(BuildContext context) {
         return (Collector collector) -> {
             List<Path> filePaths;
-            try (Stream<Path> paths = Files.find(Path.of(context.eval("%{buildroot}")), 42,
-                    (path, attr) -> attr.isRegularFile())) {
+            try (Stream<Path> paths =
+                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -77,8 +75,8 @@ abstract class AbstractTestGeneratorFactory implements GeneratorFactory {
     public Generator createGenerator(BuildContext context) {
         return (Collector collector) -> {
             List<Path> filePaths;
-            try (Stream<Path> paths = Files.find(Path.of(context.eval("%{buildroot}")), 42,
-                    (path, attr) -> attr.isRegularFile())) {
+            try (Stream<Path> paths =
+                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -116,14 +114,15 @@ class TestGeneratorFactory3 implements GeneratorFactory {
     public Generator createGenerator(BuildContext context) {
         return (Collector collector) -> {
             List<Path> filePaths;
-            try (Stream<Path> paths = Files.find(Path.of(context.eval("%{buildroot}")), 42,
-                    (path, attr) -> attr.isRegularFile())) {
+            try (Stream<Path> paths =
+                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
             for (Path filePath : filePaths) {
-                collector.addProvides(filePath, "prov" + filePath.getFileName().toString().length());
+                collector.addProvides(
+                        filePath, "prov" + filePath.getFileName().toString().length());
                 if (filePath.toString().endsWith("3")) {
                     collector.addRequires(filePath, "req");
                 }
@@ -210,7 +209,8 @@ public class CompoundGeneratorTest {
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn(br.toString()).anyTimes();
         EasyMock.expect(bc.eval("%#")).andReturn("1");
         EasyMock.expect(bc.eval("%1")).andReturn(br + "/some/file/one");
-        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no generators were specified}")).andReturn("");
+        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no generators were specified}"))
+                .andReturn("");
         EasyMock.replay(bc);
         Files.createDirectories(br.resolve("some/file"));
         Files.createFile(br.resolve("some/file/one"));
@@ -248,7 +248,9 @@ public class CompoundGeneratorTest {
         EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}")).andReturn(TestGeneratorFactory3.class.getName());
         EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}")).andReturn(TestGeneratorFactory3.class.getName());
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
-        EasyMock.expect(bc.eval("%{?__xmvngen_protocol}")).andReturn("multifile").anyTimes();
+        EasyMock.expect(bc.eval("%{?__xmvngen_protocol}"))
+                .andReturn("multifile")
+                .anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("" + br + "").anyTimes();
         EasyMock.expect(bc.eval("%#")).andReturn("5").times(2);
         EasyMock.expect(bc.eval("%1")).andReturn(br + "/f").times(2);
@@ -266,11 +268,17 @@ public class CompoundGeneratorTest {
         Files.createFile(br.resolve("file66"));
         CompoundGenerator cg = new CompoundGenerator(bc);
         String prov = cg.runGenerator("provides");
-        assertEquals(";" + br + "/f\n" + "prov1\n" + //
-                ";" + br + "/f2\n" + "prov2\n" + //
-                ";" + br + "/ff3\n" + "prov3\n" + //
-                ";" + br + "/file\n" + "prov4\n" + //
-                ";" + br + "/file5\n" + "prov5\n", prov);
+        assertEquals(
+                ";" + br + "/f\n" + "prov1\n" + //
+                        ";"
+                        + br + "/f2\n" + "prov2\n" + //
+                        ";"
+                        + br + "/ff3\n" + "prov3\n" + //
+                        ";"
+                        + br + "/file\n" + "prov4\n" + //
+                        ";"
+                        + br + "/file5\n" + "prov5\n",
+                prov);
         String req = cg.runGenerator("requires");
         assertEquals(";" + br + "/ff3\n" + "req\n" + "", req);
         EasyMock.verify(bc);

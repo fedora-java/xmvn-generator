@@ -17,9 +17,8 @@ package org.fedoraproject.xmvn.generator.stub;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
+import org.junit.jupiter.api.Test;
 
 public class RpmBuildContextTest {
     @Test

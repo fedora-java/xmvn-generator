@@ -24,13 +24,11 @@ import static org.objectweb.asm.Opcodes.ASM9;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-
+import org.fedoraproject.xmvn.generator.Collector;
+import org.fedoraproject.xmvn.generator.logging.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ModuleVisitor;
-
-import org.fedoraproject.xmvn.generator.Collector;
-import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class ModuleInfoGleaner {
     private final Collector collector;

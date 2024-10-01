@@ -16,7 +16,6 @@
 package org.fedoraproject.xmvn.generator.stub;
 
 import java.nio.file.Path;
-
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
 

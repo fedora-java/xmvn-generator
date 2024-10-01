@@ -61,7 +61,11 @@ public class Callback {
         thread.setDaemon(true);
         thread.start();
         semaphore.acquireUninterruptibly();
-        return new Callback(Arrays.asList(javaCmd.toString(), "-cp", System.getProperty("java.class.path"),
-                CallbackEntry.class.getCanonicalName(), socketPath.toString()));
+        return new Callback(Arrays.asList(
+                javaCmd.toString(),
+                "-cp",
+                System.getProperty("java.class.path"),
+                CallbackEntry.class.getCanonicalName(),
+                socketPath.toString()));
     }
 }

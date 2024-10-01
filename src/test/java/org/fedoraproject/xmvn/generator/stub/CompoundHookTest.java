@@ -21,11 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.HookFactory;
+import org.junit.jupiter.api.Test;
 
 class TestHookFactory1 implements HookFactory {
     static Hook hook;
@@ -51,8 +50,9 @@ public class CompoundHookTest {
     @Test
     public void testCompoundHook() {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}")).andReturn(
-                "\n " + TestHookFactory1.class.getName() + " \n\t   " + TestHookFactory2.class.getName() + " ");
+        EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}"))
+                .andReturn(
+                        "\n " + TestHookFactory1.class.getName() + " \n\t   " + TestHookFactory2.class.getName() + " ");
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/build/root").anyTimes();
         Hook hook1 = EasyMock.createStrictMock(Hook.class);
@@ -104,7 +104,8 @@ public class CompoundHookTest {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
         EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}")).andReturn("");
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
-        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no post-install hooks were specified}")).andReturn("");
+        EasyMock.expect(bc.eval("%{warn:xmvn-generator: no post-install hooks were specified}"))
+                .andReturn("");
         EasyMock.replay(bc);
         new CompoundHook(bc).runHook();
         EasyMock.verify(bc);

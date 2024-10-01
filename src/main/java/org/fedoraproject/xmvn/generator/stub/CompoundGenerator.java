@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Generator;
 import org.fedoraproject.xmvn.generator.GeneratorFactory;
@@ -35,7 +34,8 @@ class CompoundGenerator {
     private Generator loadGenerator(String cn) {
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            GeneratorFactory factory = (GeneratorFactory) cl.loadClass(cn).getDeclaredConstructor().newInstance();
+            GeneratorFactory factory =
+                    (GeneratorFactory) cl.loadClass(cn).getDeclaredConstructor().newInstance();
             return factory.createGenerator(buildContext);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
@@ -48,12 +48,15 @@ class CompoundGenerator {
             Logger.enableDebug();
         }
         multifile = buildContext.eval("%{?__xmvngen_protocol}").equals("multifile");
-        Set<String> provCns = Set.of(buildContext.eval("%{?__xmvngen_provides_generators}").split("\\s+"));
-        Set<String> reqCns = Set.of(buildContext.eval("%{?__xmvngen_requires_generators}").split("\\s+"));
+        Set<String> provCns =
+                Set.of(buildContext.eval("%{?__xmvngen_provides_generators}").split("\\s+"));
+        Set<String> reqCns =
+                Set.of(buildContext.eval("%{?__xmvngen_requires_generators}").split("\\s+"));
         Set<String> allCns = new LinkedHashSet<>();
         allCns.addAll(provCns);
         allCns.addAll(reqCns);
-        generators = allCns.stream().filter(cn -> !cn.isEmpty())
+        generators = allCns.stream()
+                .filter(cn -> !cn.isEmpty())
                 .map(cn -> new FilteredGenerator(loadGenerator(cn), provCns.contains(cn), reqCns.contains(cn)))
                 .collect(Collectors.toUnmodifiableList());
         if (generators.isEmpty()) {
@@ -68,7 +71,8 @@ class CompoundGenerator {
             Logger.startLogging();
             for (Generator generator : generators) {
                 Logger.startNewSection();
-                Logger.debug("Running " + generator + " (" + generator.getClass().getCanonicalName() + ")");
+                Logger.debug(
+                        "Running " + generator + " (" + generator.getClass().getCanonicalName() + ")");
                 generator.generate(collector);
             }
             Logger.finishLogging();

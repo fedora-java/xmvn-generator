@@ -21,11 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.jar.Manifest;
-
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class JarTransformer {
@@ -49,8 +47,8 @@ class JarTransformer {
         try {
             Files.copy(targetJar, backupPath, StandardCopyOption.COPY_ATTRIBUTES);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to inject manifest: I/O error when creating backup file: " + backupPath,
-                    e);
+            throw new RuntimeException(
+                    "Unable to inject manifest: I/O error when creating backup file: " + backupPath, e);
         }
         try (ZipFile jar = new ZipFile(backupPath.toFile());
                 ZipArchiveOutputStream os = new ZipArchiveOutputStream(targetJar.toFile())) {

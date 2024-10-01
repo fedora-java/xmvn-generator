@@ -18,11 +18,10 @@ package org.fedoraproject.xmvn.generator.transformer;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Test;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.HookFactory;
+import org.junit.jupiter.api.Test;
 
 public class TransformerHookFactoryTest {
     @Test

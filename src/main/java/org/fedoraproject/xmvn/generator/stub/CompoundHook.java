@@ -18,7 +18,6 @@ package org.fedoraproject.xmvn.generator.stub;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Hook;
 import org.fedoraproject.xmvn.generator.HookFactory;
@@ -34,9 +33,11 @@ class CompoundHook {
         }
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            for (String cn : buildContext.eval("%{?__xmvngen_post_install_hooks}").split("\\s+")) {
+            for (String cn :
+                    buildContext.eval("%{?__xmvngen_post_install_hooks}").split("\\s+")) {
                 if (!cn.isEmpty()) {
-                    HookFactory factory = (HookFactory) cl.loadClass(cn).getDeclaredConstructor().newInstance();
+                    HookFactory factory = (HookFactory)
+                            cl.loadClass(cn).getDeclaredConstructor().newInstance();
                     hooks.add(factory.createHook(buildContext));
                 }
             }
