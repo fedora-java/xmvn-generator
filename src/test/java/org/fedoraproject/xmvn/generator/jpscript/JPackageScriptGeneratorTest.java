@@ -64,4 +64,9 @@ public class JPackageScriptGeneratorTest {
     public void testNonJPackage() throws Exception {
         performTest("xmvn");
     }
+
+    @Test
+    public void testInvalidUtf8() throws Exception {
+        performTest("invalid-utf8");
+    }
 }
