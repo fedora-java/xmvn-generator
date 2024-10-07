@@ -41,7 +41,7 @@ from Lua.
 %mvn_file : %{name}
 
 %build
-%mvn_build
+%mvn_build -- -P\!quality
 
 %install
 %mvn_install

@@ -158,21 +158,31 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M7</version>
       </plugin>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.43.0</version>
-        <configuration>
-          <java>
-            <palantirJavaFormat>
-              <version>2.39.0</version>
-              <formatJavadoc>true</formatJavadoc>
-            </palantirJavaFormat>
-            <removeUnusedImports/>
-            <formatAnnotations/>
-            <importOrder/>
-            <licenseHeader>
-              <content>/*-
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>quality</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <version>2.43.0</version>
+            <configuration>
+              <java>
+                <palantirJavaFormat>
+                  <version>2.39.0</version>
+                  <formatJavadoc>true</formatJavadoc>
+                </palantirJavaFormat>
+                <removeUnusedImports/>
+                <formatAnnotations/>
+                <importOrder/>
+                <licenseHeader>
+                  <content>/*-
  * Copyright (c) $YEAR Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -187,15 +197,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */</content>
-            </licenseHeader>
-          </java>
-          <pom>
-            <sortPom>
-              <encoding>US-ASCII</encoding>
-              <expandEmptyElements>false</expandEmptyElements>
-            </sortPom>
-            <licenseHeader>
-              <content>&lt;?xml version="1.0" encoding="US-ASCII"?&gt;
+                </licenseHeader>
+              </java>
+              <pom>
+                <sortPom>
+                  <encoding>US-ASCII</encoding>
+                  <expandEmptyElements>false</expandEmptyElements>
+                </sortPom>
+                <licenseHeader>
+                  <content>&lt;?xml version="1.0" encoding="US-ASCII"?&gt;
 &lt;!--
  ! Copyright (c) $YEAR Red Hat, Inc.
  !
@@ -211,21 +221,21 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  `--&gt;</content>
-              <delimiter>&lt;project</delimiter>
-            </licenseHeader>
-          </pom>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
+                  <delimiter>&lt;project</delimiter>
+                </licenseHeader>
+              </pom>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>auto-format</id>
       <build>
