@@ -17,6 +17,7 @@ package org.fedoraproject.xmvn.generator.jpscript;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -46,6 +47,9 @@ class JPackageScriptGenerator implements Generator {
                         collector.addRequires(filePath, "java-21-openjdk-headless");
                     }
                 }
+            } catch (MalformedInputException e) {
+                // Continue despite exception
+                e.printStackTrace();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
