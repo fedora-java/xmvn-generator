@@ -38,11 +38,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class ModuleInfoGleanerTest {
-    @TempDir
-    private Path srcDir;
+    @TempDir private Path srcDir;
 
-    @TempDir
-    private Path binDir;
+    @TempDir private Path binDir;
 
     private final Deque<Path> modulePath = new ArrayDeque<>();
     private Collector collector;
@@ -72,7 +70,8 @@ public class ModuleInfoGleanerTest {
 
     private void performTest() throws Exception {
         EasyMock.replay(collector);
-        try (InputStream is = Files.newInputStream(modulePath.getFirst().resolve("module-info.class"))) {
+        try (InputStream is =
+                Files.newInputStream(modulePath.getFirst().resolve("module-info.class"))) {
             gleaner.glean(is);
         }
         EasyMock.verify(collector);
@@ -166,13 +165,17 @@ public class ModuleInfoGleanerTest {
             opts.add("-p");
             opts.add(modulePath.stream().map(Path::toString).collect(Collectors.joining(":")));
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null)) {
+            try (StandardJavaFileManager fileManager =
+                    compiler.getStandardFileManager(null, null, null)) {
                 Iterable<? extends JavaFileObject> compilationUnits =
                         fileManager.getJavaFileObjectsFromFiles(List.of(moduleInfoJava.toFile()));
                 StringWriter compilerOutput = new StringWriter();
                 CompilationTask task =
-                        compiler.getTask(compilerOutput, fileManager, null, opts, null, compilationUnits);
-                assertTrue(task.call(), "module-info compilation failed with output:\n" + compilerOutput);
+                        compiler.getTask(
+                                compilerOutput, fileManager, null, opts, null, compilationUnits);
+                assertTrue(
+                        task.call(),
+                        "module-info compilation failed with output:\n" + compilerOutput);
             }
             modulePath.addFirst(outDir);
         }

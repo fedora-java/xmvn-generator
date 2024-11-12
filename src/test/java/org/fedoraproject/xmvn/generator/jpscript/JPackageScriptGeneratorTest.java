@@ -28,8 +28,7 @@ public class JPackageScriptGeneratorTest {
     private Collector collector;
     private BuildContext context;
 
-    @TempDir
-    private Path br;
+    @TempDir private Path br;
 
     @BeforeEach
     public void setUp() {

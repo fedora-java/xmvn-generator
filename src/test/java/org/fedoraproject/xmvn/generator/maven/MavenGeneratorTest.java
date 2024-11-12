@@ -44,15 +44,17 @@ public class MavenGeneratorTest {
     private MetadataResolver metadataResolver;
     private Resolver resolver;
 
-    @TempDir
-    private Path br;
+    @TempDir private Path br;
 
     @BeforeEach
     public void setUp() {
         collector = EasyMock.createMock(Collector.class);
         context = EasyMock.createMock(BuildContext.class);
         resolver = EasyMock.createMock(Resolver.class);
-        metadataResolver = new ServiceLocatorFactory().createServiceLocator().getService(MetadataResolver.class);
+        metadataResolver =
+                new ServiceLocatorFactory()
+                        .createServiceLocator()
+                        .getService(MetadataResolver.class);
     }
 
     private void addBrFile(String loc, String content) throws Exception {
@@ -181,14 +183,16 @@ public class MavenGeneratorTest {
     @Disabled("XMvn always ignores invalid metadata files")
     @Test
     public void testInvalidMetadata() throws Exception {
-        addMd("""
+        addMd(
+                """
                 <?xml version="1.0"?>
                 <evil/>""");
         try {
             performTest();
             fail("Expected exception to be thrown");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Expected root element 'metadata' but found 'evil'"));
+            assertTrue(
+                    e.getMessage().contains("Expected root element 'metadata' but found 'evil'"));
         }
     }
 
@@ -200,7 +204,10 @@ public class MavenGeneratorTest {
             performTest();
             fail("Expected exception to be thrown");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("XML document structures must start and end within the same entity"));
+            assertTrue(
+                    e.getMessage()
+                            .contains(
+                                    "XML document structures must start and end within the same entity"));
         }
     }
 
@@ -424,7 +431,8 @@ public class MavenGeneratorTest {
                     </artifacts>
                 </metadata>""");
         expectProv("md2", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.b60.25.p2");
-        expectProv("md2", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.b60.25.p2");
+        expectProv(
+                "md2", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.b60.25.p2");
         performTest();
     }
 
@@ -876,7 +884,8 @@ public class MavenGeneratorTest {
                     </artifacts>
                 </metadata>""");
         expectProv("R1", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.B60.25.p2");
-        expectProv("R1", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
+        expectProv(
+                "R1", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
         expectReq("R1", "ns-mvn(org.codehaus.plexus:plexus-ant-factory)");
         addMd(
                 "R2",
@@ -972,7 +981,8 @@ public class MavenGeneratorTest {
                     </artifacts>
                 </metadata>""");
         expectProv("R0", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.B60.25.p2");
-        expectProv("R0", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
+        expectProv(
+                "R0", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
         expectReq("R0", "ns-mvn(org.codehaus.plexus:plexus-ant-factory)");
         expectReq("R0", "ns-mvn(codehaus:plexus-utils) = 1.2");
         expectReq("R0", "mvn(org.apache.maven.wagon:wagon-provider-api::test-jar:)");
@@ -1545,7 +1555,8 @@ public class MavenGeneratorTest {
                     </artifacts>
                 </metadata>""");
         expectProv("RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.B60.25.p2");
-        expectProv("RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
+        expectProv(
+                "RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
         expectReq("RR", "ns-mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectReq("RR", "ns-mvn(codehaus:plexus-utils:1.2)");
         expectReq("RR", "ns-mvn(codehaus:plexus-cipher:1.0) = 1.1");
@@ -1732,7 +1743,8 @@ public class MavenGeneratorTest {
                     </artifacts>
                 </metadata>""");
         expectProv("RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:6.0.18) = 9.1.1.B60.25.p2");
-        expectProv("RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
+        expectProv(
+                "RR", "ns-mvn(org.mortbay.jetty:jsp-2.1-glassfish:pom:6.0.18) = 9.1.1.B60.25.p2");
         expectReq("RR", "ns-mvn(org.codehaus.plexus:plexus-ant-factory)");
         expectReq("RR", "ns-mvn(codehaus:plexus-utils) = 1.2");
         expectReq("RR", "mvn(org.apache.maven.wagon:wagon-provider-api::test-jar:)");
@@ -2082,7 +2094,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("R", "ns-mvn(g:a1) = 1.2");
         expectReq("R", "ns-mvn(g:a2) = 1.2");
-        EasyMock.expect(context.eval("%{error:Dependency on skipped artifact: g:skipped:jar:UNKNOWN}"))
+        EasyMock.expect(
+                        context.eval(
+                                "%{error:Dependency on skipped artifact: g:skipped:jar:UNKNOWN}"))
                 .andReturn(null);
         addMd(
                 "S",
@@ -2230,8 +2244,9 @@ public class MavenGeneratorTest {
                 </metadata>""");
         expectProv("mvn(org.codehaus.plexus:plexus-ant-factory:1.0) = 1.0");
         expectProv("mvn(org.codehaus.plexus:plexus-ant-factory:pom:1.0) = 1.0");
-        EasyMock.expect(context.eval(
-                        "%{error:Dependency on unresolved artifact: org.apache.maven:maven-project:jar:2.2.1}"))
+        EasyMock.expect(
+                        context.eval(
+                                "%{error:Dependency on unresolved artifact: org.apache.maven:maven-project:jar:2.2.1}"))
                 .andReturn(null);
         performTest();
     }

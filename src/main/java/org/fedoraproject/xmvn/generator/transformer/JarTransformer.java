@@ -43,12 +43,14 @@ class JarTransformer {
         } catch (IOException e) {
             return;
         }
-        Path backupPath = targetJar.getParent().resolve(targetJar.getFileName().toString() + "-backup");
+        Path backupPath =
+                targetJar.getParent().resolve(targetJar.getFileName().toString() + "-backup");
         try {
             Files.copy(targetJar, backupPath, StandardCopyOption.COPY_ATTRIBUTES);
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Unable to inject manifest: I/O error when creating backup file: " + backupPath, e);
+                    "Unable to inject manifest: I/O error when creating backup file: " + backupPath,
+                    e);
         }
         try (ZipFile jar = new ZipFile(backupPath.toFile());
                 ZipArchiveOutputStream os = new ZipArchiveOutputStream(targetJar.toFile())) {
@@ -67,7 +69,8 @@ class JarTransformer {
             // Re-throw exceptions that occur when processing JAR file after reading header
             // and
             // manifest.
-            throw new RuntimeException("Failed to inject manifest; backup file is available at " + backupPath, e);
+            throw new RuntimeException(
+                    "Failed to inject manifest; backup file is available at " + backupPath, e);
         }
         try {
             Files.delete(backupPath);

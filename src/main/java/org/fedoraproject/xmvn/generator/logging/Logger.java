@@ -67,7 +67,8 @@ public class Logger {
     }
 
     public static void finishLogging() {
-        Logger.print(BOX_BOTTOM_LEFT + repeat(BOX_BORDER_HORIZONTAL, BOX_WIDTH - 2) + BOX_BOTTOM_RIGHT);
+        Logger.print(
+                BOX_BOTTOM_LEFT + repeat(BOX_BORDER_HORIZONTAL, BOX_WIDTH - 2) + BOX_BOTTOM_RIGHT);
         flush();
     }
 }

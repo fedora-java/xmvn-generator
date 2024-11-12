@@ -49,7 +49,10 @@ class TestGeneratorFactory2 implements GeneratorFactory {
         return (Collector collector) -> {
             List<Path> filePaths;
             try (Stream<Path> paths =
-                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
+                    Files.find(
+                            Path.of(context.eval("%{buildroot}")),
+                            42,
+                            (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -76,7 +79,10 @@ abstract class AbstractTestGeneratorFactory implements GeneratorFactory {
         return (Collector collector) -> {
             List<Path> filePaths;
             try (Stream<Path> paths =
-                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
+                    Files.find(
+                            Path.of(context.eval("%{buildroot}")),
+                            42,
+                            (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -115,7 +121,10 @@ class TestGeneratorFactory3 implements GeneratorFactory {
         return (Collector collector) -> {
             List<Path> filePaths;
             try (Stream<Path> paths =
-                    Files.find(Path.of(context.eval("%{buildroot}")), 42, (path, attr) -> attr.isRegularFile())) {
+                    Files.find(
+                            Path.of(context.eval("%{buildroot}")),
+                            42,
+                            (path, attr) -> attr.isRegularFile())) {
                 filePaths = paths.toList();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -132,14 +141,19 @@ class TestGeneratorFactory3 implements GeneratorFactory {
 }
 
 public class CompoundGeneratorTest {
-    @TempDir
-    Path br;
+    @TempDir Path br;
 
     @Test
     public void testCompoundGenerator() throws IOException {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        String generators = "\n" + " " + TestGeneratorFactory1.class.getName() + " \n" + "\t   "
-                + TestGeneratorFactory2.class.getName() + " ";
+        String generators =
+                "\n"
+                        + " "
+                        + TestGeneratorFactory1.class.getName()
+                        + " \n"
+                        + "\t   "
+                        + TestGeneratorFactory2.class.getName()
+                        + " ";
         EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}")).andReturn(generators);
         EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}")).andReturn(generators);
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
@@ -185,8 +199,10 @@ public class CompoundGeneratorTest {
     @Test
     public void testClassIsNotFactory() throws Exception {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}")).andReturn(CompoundGeneratorTest.class.getName());
-        EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}")).andReturn(CompoundGeneratorTest.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}"))
+                .andReturn(CompoundGeneratorTest.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}"))
+                .andReturn(CompoundGeneratorTest.class.getName());
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.expect(bc.eval("%{?__xmvngen_protocol}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
@@ -245,12 +261,12 @@ public class CompoundGeneratorTest {
     @Test
     public void testMultifile() throws Exception {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}")).andReturn(TestGeneratorFactory3.class.getName());
-        EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}")).andReturn(TestGeneratorFactory3.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_provides_generators}"))
+                .andReturn(TestGeneratorFactory3.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_requires_generators}"))
+                .andReturn(TestGeneratorFactory3.class.getName());
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
-        EasyMock.expect(bc.eval("%{?__xmvngen_protocol}"))
-                .andReturn("multifile")
-                .anyTimes();
+        EasyMock.expect(bc.eval("%{?__xmvngen_protocol}")).andReturn("multifile").anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("" + br + "").anyTimes();
         EasyMock.expect(bc.eval("%#")).andReturn("5").times(2);
         EasyMock.expect(bc.eval("%1")).andReturn(br + "/f").times(2);
@@ -269,15 +285,30 @@ public class CompoundGeneratorTest {
         CompoundGenerator cg = new CompoundGenerator(bc);
         String prov = cg.runGenerator("provides");
         assertEquals(
-                ";" + br + "/f\n" + "prov1\n" + //
+                ";"
+                        + br
+                        + "/f\n"
+                        + "prov1\n"
+                        + //
                         ";"
-                        + br + "/f2\n" + "prov2\n" + //
+                        + br
+                        + "/f2\n"
+                        + "prov2\n"
+                        + //
                         ";"
-                        + br + "/ff3\n" + "prov3\n" + //
+                        + br
+                        + "/ff3\n"
+                        + "prov3\n"
+                        + //
                         ";"
-                        + br + "/file\n" + "prov4\n" + //
+                        + br
+                        + "/file\n"
+                        + "prov4\n"
+                        + //
                         ";"
-                        + br + "/file5\n" + "prov5\n",
+                        + br
+                        + "/file5\n"
+                        + "prov5\n",
                 prov);
         String req = cg.runGenerator("requires");
         assertEquals(";" + br + "/ff3\n" + "req\n" + "", req);

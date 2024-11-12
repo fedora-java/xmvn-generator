@@ -47,16 +47,20 @@ class TransformerHook implements Hook {
                     continue;
                 }
                 List<Path> javaFiles;
-                try (Stream<Path> paths = Files.find(
-                        prefix,
-                        10,
-                        (p, bfa) -> bfa.isRegularFile()
-                                && p.getFileName().toString().endsWith(".jar"))) {
+                try (Stream<Path> paths =
+                        Files.find(
+                                prefix,
+                                10,
+                                (p, bfa) ->
+                                        bfa.isRegularFile()
+                                                && p.getFileName().toString().endsWith(".jar"))) {
                     javaFiles = paths.toList();
                 }
                 for (Path filePath : javaFiles) {
                     JarTransformer jarTransformer = new JarTransformer(manifestTransformer);
-                    Logger.debug("injecting manifest into " + Path.of("/").resolve(buildRoot.relativize(filePath)));
+                    Logger.debug(
+                            "injecting manifest into "
+                                    + Path.of("/").resolve(buildRoot.relativize(filePath)));
                     try {
                         jarTransformer.transformJar(filePath);
                     } catch (IOException e) {

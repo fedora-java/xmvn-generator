@@ -37,8 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class JarTransformerTest {
-    @TempDir
-    private Path workDir;
+    @TempDir private Path workDir;
 
     private Path testResource;
     private Path testJar;
@@ -55,7 +54,11 @@ public class JarTransformerTest {
         testResource = Path.of("src/test/resources").resolve(testResourceName);
         assertTrue(Files.isRegularFile(testResource));
         testJar = workDir.resolve("test.jar");
-        Files.copy(testResource, testJar, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+                testResource,
+                testJar,
+                StandardCopyOption.COPY_ATTRIBUTES,
+                StandardCopyOption.REPLACE_EXISTING);
         backupPath = Path.of(testJar + "-backup");
     }
 
@@ -81,8 +84,8 @@ public class JarTransformerTest {
     }
 
     /**
-     * Test JAR if manifest injection works when MANIFEST.MF file appears later in the file (for example produced by
-     * adding manifest to existing jar with plain zip)
+     * Test JAR if manifest injection works when MANIFEST.MF file appears later in the file (for
+     * example produced by adding manifest to existing jar with plain zip)
      *
      * @throws Exception
      */
@@ -93,8 +96,8 @@ public class JarTransformerTest {
     }
 
     /**
-     * Regression test for a jar which contains an entry that can recompress with a different size, which caused a
-     * mismatch in sizes.
+     * Regression test for a jar which contains an entry that can recompress with a different size,
+     * which caused a mismatch in sizes.
      *
      * @throws Exception
      */
@@ -122,9 +125,12 @@ public class JarTransformerTest {
      */
     @Test
     public void testManifestInjectionSanePermissions() throws Exception {
-        assumeTrue(Files.getPosixFilePermissions(testJar).contains(PosixFilePermission.OTHERS_READ), "sane umask");
+        assumeTrue(
+                Files.getPosixFilePermissions(testJar).contains(PosixFilePermission.OTHERS_READ),
+                "sane umask");
         performTest();
-        assertTrue(Files.getPosixFilePermissions(testJar).contains(PosixFilePermission.OTHERS_READ));
+        assertTrue(
+                Files.getPosixFilePermissions(testJar).contains(PosixFilePermission.OTHERS_READ));
     }
 
     /**
@@ -155,7 +161,8 @@ public class JarTransformerTest {
     }
 
     /**
-     * Test that the backup file created during injectManifest was deleted after a successful operation
+     * Test that the backup file created during injectManifest was deleted after a successful
+     * operation
      *
      * @throws Exception
      */
@@ -166,17 +173,19 @@ public class JarTransformerTest {
     }
 
     /**
-     * Test that the backup file created during injectManifest remains after an unsuccessful operation and its content
-     * is identical to the original file
+     * Test that the backup file created during injectManifest remains after an unsuccessful
+     * operation and its content is identical to the original file
      *
      * @throws Exception
      */
     @Test
     public void testBackupOnFailure() throws Exception {
         byte[] content = Files.readAllBytes(testJar);
-        jarTransformer = new JarTransformer(mf -> {
-            throw new RuntimeException("boom");
-        });
+        jarTransformer =
+                new JarTransformer(
+                        mf -> {
+                            throw new RuntimeException("boom");
+                        });
         Exception ex = assertThrows(Exception.class, this::performTest);
         assertTrue(
                 ex.getMessage().contains(backupPath.toString()),
@@ -187,7 +196,11 @@ public class JarTransformerTest {
                 content,
                 backupContent,
                 "Content of the backup file is different from the content of the original file");
-        Files.copy(testResource, testJar, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+                testResource,
+                testJar,
+                StandardCopyOption.COPY_ATTRIBUTES,
+                StandardCopyOption.REPLACE_EXISTING);
         try (FileOutputStream os = new FileOutputStream(testJar.toFile(), true)) {
             /// Append garbage to the original file to check if the content of the backup
             /// will be retained
@@ -209,7 +222,10 @@ public class JarTransformerTest {
     @Test
     public void testFailWhenBachupPresent() throws Exception {
         Files.writeString(backupPath, "something");
-        assertThrows(Exception.class, this::performTest, "Expected failure because the the backup file already exists");
+        assertThrows(
+                Exception.class,
+                this::performTest,
+                "Expected failure because the the backup file already exists");
         assertTrue(Files.exists(backupPath));
     }
 }
