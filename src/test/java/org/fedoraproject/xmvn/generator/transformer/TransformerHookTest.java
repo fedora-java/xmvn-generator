@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class TransformerHookTest {
-    @TempDir
-    private Path buildRoot;
+    @TempDir private Path buildRoot;
 
     @Test
     public void testManifestInjection() throws Exception {

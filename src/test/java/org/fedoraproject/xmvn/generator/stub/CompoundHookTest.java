@@ -52,7 +52,11 @@ public class CompoundHookTest {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
         EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}"))
                 .andReturn(
-                        "\n " + TestHookFactory1.class.getName() + " \n\t   " + TestHookFactory2.class.getName() + " ");
+                        "\n "
+                                + TestHookFactory1.class.getName()
+                                + " \n\t   "
+                                + TestHookFactory2.class.getName()
+                                + " ");
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/build/root").anyTimes();
         Hook hook1 = EasyMock.createStrictMock(Hook.class);
@@ -87,7 +91,8 @@ public class CompoundHookTest {
     @Test
     public void testClassIsNotFactory() throws Exception {
         BuildContext bc = EasyMock.createMock(BuildContext.class);
-        EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}")).andReturn(CompoundHookTest.class.getName());
+        EasyMock.expect(bc.eval("%{?__xmvngen_post_install_hooks}"))
+                .andReturn(CompoundHookTest.class.getName());
         EasyMock.expect(bc.eval("%{?__xmvngen_debug}")).andReturn("").anyTimes();
         EasyMock.replay(bc);
         try {

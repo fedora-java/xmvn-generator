@@ -144,7 +144,8 @@ class MavenGenerator implements Generator {
         return null;
     }
 
-    private String resolveDep(Artifact dep, Map<Artifact, List<UniqueArtifact>> myArtifacts, Subpackage pmd) {
+    private String resolveDep(
+            Artifact dep, Map<Artifact, List<UniqueArtifact>> myArtifacts, Subpackage pmd) {
         for (Artifact depa : List.of(dep, dep.setVersion(Artifact.DEFAULT_VERSION))) {
             List<UniqueArtifact> umds = myArtifacts.get(depa);
             if (umds != null) {
@@ -176,58 +177,66 @@ class MavenGenerator implements Generator {
         List<UniqueArtifact> umds = new ArrayList<>();
         if (Files.isDirectory(prefix)) {
             MetadataRequest mdReq = new MetadataRequest(List.of(prefix.toString()));
-            metadataResolver.resolveMetadata(mdReq).getPackageMetadataMap().forEach((filePath, pmd) -> {
-                Subpackage md = new Subpackage(filePath);
-                for (ArtifactMetadata amd : pmd.getArtifacts()) {
-                    UniqueArtifact umd = new UniqueArtifact(md, amd);
-                    umds.add(umd);
-                    List<Artifact> arts = new ArrayList<>();
-                    arts.add(amd.toArtifact());
-                    for (ArtifactAlias alias : amd.getAliases()) {
-                        arts.add(new DefaultArtifact(
-                                alias.getGroupId(),
-                                alias.getArtifactId(),
-                                alias.getExtension(),
-                                alias.getClassifier(),
-                                Artifact.DEFAULT_VERSION));
-                    }
-                    umd.pom = true;
-                    for (Artifact art : arts) {
-                        if (!"pom".equals(art.getExtension())) {
-                            umd.pom = false;
-                        }
-                        if (amd.getCompatVersions().isEmpty()) {
-                            umd.artifacts.add(art.setVersion(Artifact.DEFAULT_VERSION));
-                        } else {
-                            for (String ver : amd.getCompatVersions()) {
-                                umd.artifacts.add(art.setVersion(ver));
-                            }
-                        }
-                    }
-                    md.pomOnly &= umd.pom;
-                    for (Artifact vart : umd.artifacts) {
-                        myArtifacts
-                                .computeIfAbsent(vart, x -> new ArrayList<>())
-                                .add(umd);
-                    }
-                }
-                for (SkippedArtifactMetadata smd : pmd.getSkippedArtifacts()) {
-                    Artifact sart = new DefaultArtifact(
-                            smd.getGroupId(),
-                            smd.getArtifactId(),
-                            smd.getExtension(),
-                            smd.getClassifier(),
-                            Artifact.DEFAULT_VERSION);
-                    skipped.add(sart);
-                }
-            });
+            metadataResolver
+                    .resolveMetadata(mdReq)
+                    .getPackageMetadataMap()
+                    .forEach(
+                            (filePath, pmd) -> {
+                                Subpackage md = new Subpackage(filePath);
+                                for (ArtifactMetadata amd : pmd.getArtifacts()) {
+                                    UniqueArtifact umd = new UniqueArtifact(md, amd);
+                                    umds.add(umd);
+                                    List<Artifact> arts = new ArrayList<>();
+                                    arts.add(amd.toArtifact());
+                                    for (ArtifactAlias alias : amd.getAliases()) {
+                                        arts.add(
+                                                new DefaultArtifact(
+                                                        alias.getGroupId(),
+                                                        alias.getArtifactId(),
+                                                        alias.getExtension(),
+                                                        alias.getClassifier(),
+                                                        Artifact.DEFAULT_VERSION));
+                                    }
+                                    umd.pom = true;
+                                    for (Artifact art : arts) {
+                                        if (!"pom".equals(art.getExtension())) {
+                                            umd.pom = false;
+                                        }
+                                        if (amd.getCompatVersions().isEmpty()) {
+                                            umd.artifacts.add(
+                                                    art.setVersion(Artifact.DEFAULT_VERSION));
+                                        } else {
+                                            for (String ver : amd.getCompatVersions()) {
+                                                umd.artifacts.add(art.setVersion(ver));
+                                            }
+                                        }
+                                    }
+                                    md.pomOnly &= umd.pom;
+                                    for (Artifact vart : umd.artifacts) {
+                                        myArtifacts
+                                                .computeIfAbsent(vart, x -> new ArrayList<>())
+                                                .add(umd);
+                                    }
+                                }
+                                for (SkippedArtifactMetadata smd : pmd.getSkippedArtifacts()) {
+                                    Artifact sart =
+                                            new DefaultArtifact(
+                                                    smd.getGroupId(),
+                                                    smd.getArtifactId(),
+                                                    smd.getExtension(),
+                                                    smd.getClassifier(),
+                                                    Artifact.DEFAULT_VERSION);
+                                    skipped.add(sart);
+                                }
+                            });
         }
         for (UniqueArtifact umd : umds) {
             for (Artifact art : umd.artifacts) {
                 collector.addProvides(umd.pkg.path, formatDep(art, umd.rpmVersion, umd.namespace));
             }
             if (umd.pkg.pomOnly) {
-                Path pomPath = buildRoot.resolve(Path.of("/").relativize(Path.of(umd.amd.getPath())));
+                Path pomPath =
+                        buildRoot.resolve(Path.of("/").relativize(Path.of(umd.amd.getPath())));
                 MavenXpp3Reader pomReader = new MavenXpp3Reader();
                 try (Reader reader = Files.newBufferedReader(pomPath)) {
                     Model pom = pomReader.read(reader);
@@ -239,7 +248,11 @@ class MavenGenerator implements Generator {
                         String paid = pom.getParent().getArtifactId();
                         String pver = coalesce(pom.getParent().getVersion(), pom.getVersion());
                         if (pgid != null && paid != null && pver != null) {
-                            String req = resolveDep(new DefaultArtifact(pgid, paid, "pom", pver), myArtifacts, umd.pkg);
+                            String req =
+                                    resolveDep(
+                                            new DefaultArtifact(pgid, paid, "pom", pver),
+                                            myArtifacts,
+                                            umd.pkg);
                             if (req != null) {
                                 collector.addRequires(umd.pkg.path, req);
                             }
@@ -252,7 +265,11 @@ class MavenGenerator implements Generator {
                             String paid = plugin.getArtifactId();
                             String pver = coalesce(plugin.getVersion(), Artifact.DEFAULT_VERSION);
                             if (paid != null) {
-                                String req = resolveDep(new DefaultArtifact(pgid, paid, pver), myArtifacts, umd.pkg);
+                                String req =
+                                        resolveDep(
+                                                new DefaultArtifact(pgid, paid, pver),
+                                                myArtifacts,
+                                                umd.pkg);
                                 if (req != null) {
                                     collector.addRequires(umd.pkg.path, req);
                                 }
@@ -263,7 +280,11 @@ class MavenGenerator implements Generator {
                             String eaid = ext.getArtifactId();
                             String ever = coalesce(ext.getVersion(), Artifact.DEFAULT_VERSION);
                             if (egid != null && eaid != null) {
-                                String req = resolveDep(new DefaultArtifact(egid, eaid, ever), myArtifacts, umd.pkg);
+                                String req =
+                                        resolveDep(
+                                                new DefaultArtifact(egid, eaid, ever),
+                                                myArtifacts,
+                                                umd.pkg);
                                 if (req != null) {
                                     collector.addRequires(umd.pkg.path, req);
                                 }
@@ -303,7 +324,8 @@ class MavenGenerator implements Generator {
                         continue;
                     }
                     if (depmds.stream().map(x -> x.pkg.path).noneMatch(umd.pkg.path::equals)) {
-                        collector.addRequires(umd.pkg.path, formatDep(rdepa, ver, dep.getNamespace()));
+                        collector.addRequires(
+                                umd.pkg.path, formatDep(rdepa, ver, dep.getNamespace()));
                     }
                 }
             }

@@ -43,28 +43,33 @@ public class Callback {
         Path tempDir = Files.createTempDirectory("xmvngen-");
         Path socketPath = tempDir.resolve("socket");
         Semaphore semaphore = new Semaphore(0);
-        Thread thread = new Thread(() -> {
-            UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(socketPath);
-            try (ServerSocketChannel serverChannel = ServerSocketChannel.open(StandardProtocolFamily.UNIX)) {
-                serverChannel.bind(socketAddress);
-                semaphore.release();
-                try (SocketChannel channel = serverChannel.accept()) {
-                    delegate.run();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                semaphore.release();
-            }
-        });
+        Thread thread =
+                new Thread(
+                        () -> {
+                            UnixDomainSocketAddress socketAddress =
+                                    UnixDomainSocketAddress.of(socketPath);
+                            try (ServerSocketChannel serverChannel =
+                                    ServerSocketChannel.open(StandardProtocolFamily.UNIX)) {
+                                serverChannel.bind(socketAddress);
+                                semaphore.release();
+                                try (SocketChannel channel = serverChannel.accept()) {
+                                    delegate.run();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                semaphore.release();
+                            }
+                        });
         thread.setDaemon(true);
         thread.start();
         semaphore.acquireUninterruptibly();
-        return new Callback(Arrays.asList(
-                javaCmd.toString(),
-                "-cp",
-                System.getProperty("java.class.path"),
-                CallbackEntry.class.getCanonicalName(),
-                socketPath.toString()));
+        return new Callback(
+                Arrays.asList(
+                        javaCmd.toString(),
+                        "-cp",
+                        System.getProperty("java.class.path"),
+                        CallbackEntry.class.getCanonicalName(),
+                        socketPath.toString()));
     }
 }

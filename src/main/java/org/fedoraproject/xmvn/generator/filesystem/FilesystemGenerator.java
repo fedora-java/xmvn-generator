@@ -55,7 +55,8 @@ class FilesystemGenerator implements Generator {
         for (Path prefix : prefixes) {
             if (Files.isDirectory(prefix)) {
                 try (Stream<Path> filePaths =
-                        Files.find(prefix, Integer.MAX_VALUE, (path, attr) -> !path.equals(prefix))) {
+                        Files.find(
+                                prefix, Integer.MAX_VALUE, (path, attr) -> !path.equals(prefix))) {
                     for (Path filePath : filePaths.toList()) {
                         collector.addRequires(filePath, "javapackages-filesystem");
                     }

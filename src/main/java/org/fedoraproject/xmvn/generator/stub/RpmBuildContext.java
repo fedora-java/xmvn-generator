@@ -24,7 +24,8 @@ import org.fedoraproject.xmvn.generator.BuildContext;
 
 class RpmBuildContext implements BuildContext {
     static {
-        try (InputStream is = RpmBuildContext.class.getResourceAsStream("/xmvn-generator-native.so")) {
+        try (InputStream is =
+                RpmBuildContext.class.getResourceAsStream("/xmvn-generator-native.so")) {
             Path p = Files.createTempFile("xmvngen-native", ".so");
             try (OutputStream os = Files.newOutputStream(p)) {
                 is.transferTo(os);

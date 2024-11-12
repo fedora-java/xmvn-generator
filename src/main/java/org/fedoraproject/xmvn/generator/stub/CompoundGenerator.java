@@ -55,10 +55,16 @@ class CompoundGenerator {
         Set<String> allCns = new LinkedHashSet<>();
         allCns.addAll(provCns);
         allCns.addAll(reqCns);
-        generators = allCns.stream()
-                .filter(cn -> !cn.isEmpty())
-                .map(cn -> new FilteredGenerator(loadGenerator(cn), provCns.contains(cn), reqCns.contains(cn)))
-                .collect(Collectors.toUnmodifiableList());
+        generators =
+                allCns.stream()
+                        .filter(cn -> !cn.isEmpty())
+                        .map(
+                                cn ->
+                                        new FilteredGenerator(
+                                                loadGenerator(cn),
+                                                provCns.contains(cn),
+                                                reqCns.contains(cn)))
+                        .collect(Collectors.toUnmodifiableList());
         if (generators.isEmpty()) {
             buildContext.eval("%{warn:xmvn-generator: no generators were specified}");
         }
@@ -72,7 +78,11 @@ class CompoundGenerator {
             for (Generator generator : generators) {
                 Logger.startNewSection();
                 Logger.debug(
-                        "Running " + generator + " (" + generator.getClass().getCanonicalName() + ")");
+                        "Running "
+                                + generator
+                                + " ("
+                                + generator.getClass().getCanonicalName()
+                                + ")");
                 generator.generate(collector);
             }
             Logger.finishLogging();

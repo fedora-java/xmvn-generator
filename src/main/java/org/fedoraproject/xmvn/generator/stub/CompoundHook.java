@@ -33,11 +33,10 @@ class CompoundHook {
         }
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            for (String cn :
-                    buildContext.eval("%{?__xmvngen_post_install_hooks}").split("\\s+")) {
+            for (String cn : buildContext.eval("%{?__xmvngen_post_install_hooks}").split("\\s+")) {
                 if (!cn.isEmpty()) {
-                    HookFactory factory = (HookFactory)
-                            cl.loadClass(cn).getDeclaredConstructor().newInstance();
+                    HookFactory factory =
+                            (HookFactory) cl.loadClass(cn).getDeclaredConstructor().newInstance();
                     hooks.add(factory.createHook(buildContext));
                 }
             }
