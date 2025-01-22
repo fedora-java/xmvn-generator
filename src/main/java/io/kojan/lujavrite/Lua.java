@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2023-2024 Red Hat, Inc.
+ * Copyright (c) 2025 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fedoraproject.xmvn.generator.stub;
+package io.kojan.lujavrite;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class Lua {
+    public static native int getglobal(String name);
 
-import org.fedoraproject.xmvn.generator.BuildContext;
-import org.junit.jupiter.api.Test;
+    public static native int getfield(int index, String name);
 
-public class RpmBuildContextTest {
-    @Test
-    public void testEval() {
-        BuildContext bc = new RpmBuildContext();
-        assertEquals("12", bc.eval("%[7+5]"));
-        assertEquals("12", bc.eval("%(expr 7 + 5)"));
-    }
+    public static native void pushstring(String string);
+
+    public static native int pcall(int nargs, int nresults, int msgh);
+
+    public static native String tostring(int index);
+
+    public static native int pop(int n);
+
+    public static native int remove(int index);
 }

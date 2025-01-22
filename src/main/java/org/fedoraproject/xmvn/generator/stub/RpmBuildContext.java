@@ -15,27 +15,23 @@
  */
 package org.fedoraproject.xmvn.generator.stub;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import io.kojan.lujavrite.Lua;
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class RpmBuildContext implements BuildContext {
     static {
-        try (InputStream is =
-                RpmBuildContext.class.getResourceAsStream("/xmvn-generator-native.so")) {
-            Path p = Files.createTempFile("xmvngen-native", ".so");
-            try (OutputStream os = Files.newOutputStream(p)) {
-                is.transferTo(os);
-            }
-            System.load(p.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // FIXME don't hardcode the path
+        System.load("/usr/lib64/lua/5.4/lujavrite.so");
     }
 
     @Override
-    public native String eval(String macro);
+    public String eval(String macro) {
+        Lua.getglobal("rpm");
+        Lua.getfield(-1, "expand");
+        Lua.pushstring(macro);
+        Lua.pcall(1, 1, 0);
+        String val = Lua.tostring(-1);
+        Lua.pop(2);
+        return val;
+    }
 }
