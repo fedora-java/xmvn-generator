@@ -29,6 +29,8 @@ class RpmLujavriteStub {
         System.err.println("Hello from Java!");
         System.out.println("foo");
         BuildContext context = new RpmBuildContext();
+        System.out.println(context.eval("%[7+5]"));
+        System.out.println(context.eval("%(expr 7 + 5)"));
         return "7 plus " + arg + " equals " + context.eval("%[7+" + arg + "]");
     }
 }
@@ -59,6 +61,6 @@ public class RpmLujavriteTest {
         try (InputStream is = p.getInputStream()) {
             out = new String(is.readAllBytes());
         }
-        assertEquals("foo\n7 plus 35 equals 42\n", out);
+        assertEquals("foo\n12\n12\n7 plus 35 equals 42\n", out);
     }
 }
