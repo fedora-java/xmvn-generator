@@ -15,6 +15,20 @@
  */
 package io.kojan.lujavrite;
 
+/**
+ * Java API for calling Lua through <a href="https://github.com/mizdebsk/lujavrite">LuJavRite</a>.
+ *
+ * <p>For documentation of individual functions, see the <a
+ * href="https://www.lua.org/manual/5.4/manual.html#lua_getglobal">Lua Reference Manual</a>.
+ *
+ * <p>This trivial Java class is maintained as part of LuJavRite project, but it is expected to be
+ * source-bundled by projects depending on the Java->Lua calling functionality of LuJavRite. The
+ * canonical copy of this class source can be found at <a
+ * href="https://github.com/mizdebsk/lujavrite/blob/master/lujavrite.c">
+ * https://github.com/mizdebsk/lujavrite/blob/master/lujavrite.c</a>.
+ *
+ * @author Mikolaj Izdebski
+ */
 public class Lua {
     public static native int getglobal(String name);
 
