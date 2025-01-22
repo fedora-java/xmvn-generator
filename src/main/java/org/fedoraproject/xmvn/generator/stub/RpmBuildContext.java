@@ -26,12 +26,12 @@ class RpmBuildContext implements BuildContext {
 
     @Override
     public String eval(String macro) {
-        Lua.getglobal("rpm");
-        Lua.getfield(-1, "expand");
-        Lua.pushstring(macro);
-        Lua.pcall(1, 1, 0);
+        Lua.getglobal("rpm"); //       Stack: rpm(-1)
+        Lua.getfield(-1, "expand"); // Stack: rpm(-2), expand(-1)
+        Lua.pushstring(macro); //      Stack: rpm(-3), expand(-2), macro(-1)
+        Lua.pcall(1, 1, 0); //         Stack: rpm(-2), val(-1)
         String val = Lua.tostring(-1);
-        Lua.pop(2);
+        Lua.pop(2); //                 Stack: (empty)
         return val;
     }
 }
