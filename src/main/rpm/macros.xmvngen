@@ -8,7 +8,7 @@
 # Class path of nested JVM.  This should be a colon-separated list of
 # JARs that contains xmvn-generator.jar, JARs with third-party
 # generators or hooks (if any), and all other dependencies.
-%__xmvngen_classpath %{_jnidir}/xmvn-generator.jar:%{_javadir}/objectweb-asm/asm.jar:%{_javadir}/commons-compress.jar:%{_javadir}/commons-io.jar:%{_javadir}/xmvn/xmvn-api.jar:%{_javadir}/xmvn/xmvn-core.jar:%{_javadir}/maven/maven-model.jar:%{_javadir}/plexus/utils.jar
+%__xmvngen_classpath %{_jnidir}/xmvn-generator.jar:%{_javadir}/objectweb-asm/asm.jar:%{_javadir}/commons-compress.jar:%{_javadir}/commons-io.jar:%{_javadir}/xmvn/xmvn-api.jar:%{_javadir}/xmvn/xmvn-core.jar:%{_javadir}/kojan-xml/kojan-xml.jar:%{_javadir}/maven/maven-model.jar:%{_javadir}/plexus/utils.jar
 
 # Specify which dependency generators should be ran.
 # Values should be a space-separated list of qualified class names of
