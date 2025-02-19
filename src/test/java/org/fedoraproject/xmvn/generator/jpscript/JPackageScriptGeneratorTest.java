@@ -55,7 +55,7 @@ public class JPackageScriptGeneratorTest {
     @Test
     public void testJPackage() throws Exception {
         expectRequires("javapackages-tools");
-        expectRequires("java-21-openjdk-headless");
+        expectRequires("java-25-openjdk-headless");
         performTest("jflex");
     }
 

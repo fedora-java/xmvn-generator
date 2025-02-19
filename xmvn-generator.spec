@@ -27,7 +27,7 @@ BuildRequires:  mvn(org.ow2.asm:asm)
 
 Requires:       rpm-build
 Requires:       lujavrite
-Requires:       java-21-openjdk-headless
+Requires:       java-25-openjdk-headless
 
 %description
 XMvn Generator is a dependency generator for RPM Package Manager

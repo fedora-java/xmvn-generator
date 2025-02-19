@@ -48,6 +48,10 @@ class JPackageScriptGenerator implements Generator {
                             "\nJAVA_HOME=\"${JAVA_HOME:-/usr/lib/jvm/jre-21-openjdk}\"\n")) {
                         collector.addRequires(filePath, "java-21-openjdk-headless");
                     }
+                    if (content.contains(
+                            "\nJAVA_HOME=\"${JAVA_HOME:-/usr/lib/jvm/jre-25-openjdk}\"\n")) {
+                        collector.addRequires(filePath, "java-25-openjdk-headless");
+                    }
                 }
             } catch (MalformedInputException e) {
                 // Continue despite exception

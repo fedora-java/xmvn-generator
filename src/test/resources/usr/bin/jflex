@@ -4,7 +4,7 @@
 # JPackage Project <http://www.jpackage.org/>
 
 # Set default JAVA_HOME
-JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/jre-21-openjdk}"
+JAVA_HOME="${JAVA_HOME:-/usr/lib/jvm/jre-25-openjdk}"
 
 # Source functions library
 . /usr/share/java-utils/java-functions
