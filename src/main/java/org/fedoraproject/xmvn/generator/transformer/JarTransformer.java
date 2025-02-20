@@ -35,7 +35,7 @@ class JarTransformer {
     }
 
     public void transformJar(Path targetJar) throws IOException {
-        try (ZipFile jar = new ZipFile(targetJar.toFile())) {
+        try (ZipFile jar = ZipFile.builder().setPath(targetJar).get()) {
             if (jar.getEntry(MANIFEST_PATH) == null) {
                 Logger.debug("transformation skipped: no pre-existing manifest found to update");
                 return;
@@ -52,7 +52,7 @@ class JarTransformer {
                     "Unable to inject manifest: I/O error when creating backup file: " + backupPath,
                     e);
         }
-        try (ZipFile jar = new ZipFile(backupPath.toFile());
+        try (ZipFile jar = ZipFile.builder().setPath(backupPath).get();
                 ZipArchiveOutputStream os = new ZipArchiveOutputStream(targetJar.toFile())) {
             try (InputStream mfIs = jar.getInputStream(jar.getEntry(MANIFEST_PATH))) {
                 Manifest manifest = new Manifest(mfIs);
@@ -66,8 +66,7 @@ class JarTransformer {
             // copy the rest of content
             jar.copyRawEntries(os, entry -> !entry.equals(jar.getEntry(MANIFEST_PATH)));
         } catch (Exception e) {
-            // Re-throw exceptions that occur when processing JAR file after reading header
-            // and
+            // Re-throw exceptions that occur when processing JAR file after reading header and
             // manifest.
             throw new RuntimeException(
                     "Failed to inject manifest; backup file is available at " + backupPath, e);
