@@ -306,7 +306,7 @@ class MavenGenerator implements Generator {
                 continue;
             }
             for (Dependency dep : umd.amd.getDependencies()) {
-                if (!dep.isOptional()) {
+                if (dep.isOptional() == null || dep.isOptional() == false) {
                     Artifact depa = dep.toArtifact();
                     if ("UNKNOWN".equals(dep.getResolvedVersion())) {
                         // XXX improve error message
