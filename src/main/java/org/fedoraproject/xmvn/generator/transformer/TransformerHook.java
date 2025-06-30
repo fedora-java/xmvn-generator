@@ -64,12 +64,14 @@ class TransformerHook implements Hook {
                     try {
                         jarTransformer.transformJar(filePath);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        // Continue despite exception
+                        Logger.debug(e);
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // Continue despite exception
+            Logger.debug(e);
         }
     }
 

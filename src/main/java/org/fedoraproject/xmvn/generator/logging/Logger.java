@@ -71,4 +71,10 @@ public class Logger {
                 BOX_BOTTOM_LEFT + repeat(BOX_BORDER_HORIZONTAL, BOX_WIDTH - 2) + BOX_BOTTOM_RIGHT);
         flush();
     }
+
+    public static void debug(Throwable t) {
+        if (debugEnabled) {
+            t.printStackTrace();
+        }
+    }
 }

@@ -295,8 +295,8 @@ class MavenGenerator implements Generator {
                     try (StringWriter sw = new StringWriter();
                             PrintWriter pw = new PrintWriter(sw)) {
                         sw.append("Unable to generate POM dependencies: ");
-                        e.printStackTrace(pw);
                         Logger.debug(sw.toString());
+                        Logger.debug(e);
                     } catch (IOException e1) {
                         throw new UncheckedIOException(e1);
                     }

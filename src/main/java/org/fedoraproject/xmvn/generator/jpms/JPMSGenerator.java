@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
+import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class JPMSGenerator implements Generator {
     private final BuildContext context;
@@ -75,7 +76,8 @@ class JPMSGenerator implements Generator {
                                 }
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            // Continue despite exception
+                            Logger.debug(e);
                         }
                     }
                 } catch (IOException e) {
