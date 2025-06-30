@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import org.fedoraproject.xmvn.generator.BuildContext;
 import org.fedoraproject.xmvn.generator.Collector;
 import org.fedoraproject.xmvn.generator.Generator;
+import org.fedoraproject.xmvn.generator.logging.Logger;
 
 class JPackageScriptGenerator implements Generator {
     private final BuildContext context;
@@ -55,7 +56,7 @@ class JPackageScriptGenerator implements Generator {
                 }
             } catch (MalformedInputException e) {
                 // Continue despite exception
-                e.printStackTrace();
+                Logger.debug(e);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
