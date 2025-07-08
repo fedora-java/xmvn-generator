@@ -15,23 +15,12 @@
  */
 package org.fedoraproject.xmvn.generator.stub;
 
-import io.kojan.lujavrite.Lua;
+import io.kojan.dola.rpm.RPM;
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class RpmBuildContext implements BuildContext {
-    static {
-        // FIXME don't hardcode the path
-        System.load("/usr/lib64/lua/5.4/lujavrite.so");
-    }
-
     @Override
     public String eval(String macro) {
-        Lua.getglobal("rpm"); //       Stack: rpm(-1)
-        Lua.getfield(-1, "expand"); // Stack: rpm(-2), expand(-1)
-        Lua.pushstring(macro); //      Stack: rpm(-3), expand(-2), macro(-1)
-        Lua.pcall(1, 1, 0); //         Stack: rpm(-2), val(-1)
-        String val = Lua.tostring(-1);
-        Lua.pop(2); //                 Stack: (empty)
-        return val;
+        return RPM.rpmExpand(macro);
     }
 }

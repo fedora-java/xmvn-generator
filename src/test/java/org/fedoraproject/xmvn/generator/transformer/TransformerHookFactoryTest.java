@@ -27,6 +27,10 @@ public class TransformerHookFactoryTest {
     @Test
     public void testFactory() {
         BuildContext bc = EasyMock.createStrictMock(BuildContext.class);
+        EasyMock.expect(bc.eval("%{NAME}")).andReturn("myname");
+        EasyMock.expect(bc.eval("%{?EPOCH}")).andReturn("");
+        EasyMock.expect(bc.eval("%{VERSION}")).andReturn("1.2.3");
+        EasyMock.expect(bc.eval("%{RELEASE}")).andReturn("4.el42");
         EasyMock.expect(bc.eval("%{buildroot}")).andReturn("/tmp/build/root");
         EasyMock.expect(bc.eval("%{_javadir}")).andReturn("/tmp/javadir");
         EasyMock.expect(bc.eval("%{_jnidir}")).andReturn("/tmp/jnidir");
