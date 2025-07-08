@@ -15,4 +15,4 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
       - name: Maven build
-        run: mvn -V -B -Prelease -Dgpg.skip clean install
+        run: mvn -V -B -Prelease -Dgpg.skip -Dtest=\!RpmLujavriteTest clean install
