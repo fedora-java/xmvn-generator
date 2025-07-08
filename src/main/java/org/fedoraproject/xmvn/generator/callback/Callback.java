@@ -17,6 +17,7 @@ package org.fedoraproject.xmvn.generator.callback;
 
 import java.io.IOException;
 import java.net.StandardProtocolFamily;
+import java.net.URISyntaxException;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -64,11 +65,24 @@ public class Callback {
         thread.setDaemon(true);
         thread.start();
         semaphore.acquireUninterruptibly();
+        Path cp;
+        try {
+            cp =
+                    Path.of(
+                                    CallbackEntry.class
+                                            .getProtectionDomain()
+                                            .getCodeSource()
+                                            .getLocation()
+                                            .toURI())
+                            .toAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         return new Callback(
                 Arrays.asList(
                         javaCmd.toString(),
                         "-cp",
-                        System.getProperty("java.class.path"),
+                        cp.toString(),
                         CallbackEntry.class.getCanonicalName(),
                         socketPath.toString()));
     }

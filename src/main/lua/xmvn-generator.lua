@@ -1,5 +1,5 @@
 --
--- Copyright (c) 2023-2024 Red Hat, Inc.
+-- Copyright (c) 2023-2025 Red Hat, Inc.
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
 -- limitations under the License.
 --
 
-local lujavrite = require "lujavrite"
-
-local libjvm = rpm.expand("%{__xmvngen_libjvm}")
-local classpath = rpm.expand("%{__xmvngen_classpath}")
-
--- Initialize JVM
-lujavrite.init(
-   libjvm,
-   "-Djava.class.path=" .. classpath,
-   "--enable-native-access=ALL-UNNAMED"
-)
+local bsx = require "dola-bsx"
 
 -- Run xmvn-generator
 local function generate(kind)
-   local deps = lujavrite.call(
-      "org/fedoraproject/xmvn/generator/stub/GeneratorStub", "trampoline",
-      "(Ljava/lang/String;)Ljava/lang/String;",
+   local deps = bsx.call1(
+      "Realm:xmvn-generator",
+      "org.fedoraproject.xmvn.generator.stub.GeneratorStub",
+      "trampoline",
       kind
    )
    print(deps)
@@ -38,11 +29,12 @@ end
 
 -- Post-install hook
 local function os_install_post()
-   local command = lujavrite.call(
-      "org/fedoraproject/xmvn/generator/stub/CallbackStub", "postInstall",
-      "()Ljava/lang/String;"
+   local command = bsx.call0(
+      "Realm:xmvn-generator",
+      "org.fedoraproject.xmvn.generator.stub.CallbackStub",
+      "postInstall"
    )
-   print(command)
+   print(command .. "\n")
    rpm.undefine("__os_install_post")
    print(rpm.expand("%{__os_install_post}"))
 end

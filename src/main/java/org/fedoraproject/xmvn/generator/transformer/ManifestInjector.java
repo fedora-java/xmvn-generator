@@ -19,22 +19,23 @@ import java.util.jar.Manifest;
 import org.fedoraproject.xmvn.generator.BuildContext;
 
 class ManifestInjector implements ManifestTransformer {
-    private final BuildContext buildContext;
+    private final String name;
+    private final String epoch;
+    private final String version;
+    private final String release;
 
     public ManifestInjector(BuildContext context) {
-        this.buildContext = context;
-    }
-
-    private void inject(Manifest mf, String key, String rpmExpr) {
-        String value = buildContext.eval(rpmExpr);
-        mf.getMainAttributes().putValue(key, value);
+        name = context.eval("%{NAME}");
+        epoch = context.eval("%{?EPOCH}");
+        version = context.eval("%{VERSION}");
+        release = context.eval("%{RELEASE}");
     }
 
     @Override
     public void transform(Manifest mf) {
-        inject(mf, "Rpm-Name", "%{NAME}");
-        inject(mf, "Rpm-Epoch", "%{?EPOCH}");
-        inject(mf, "Rpm-Version", "%{VERSION}");
-        inject(mf, "Rpm-Release", "%{RELEASE}");
+        mf.getMainAttributes().putValue("Rpm-Name", name);
+        mf.getMainAttributes().putValue("Rpm-Epoch", epoch);
+        mf.getMainAttributes().putValue("Rpm-Version", version);
+        mf.getMainAttributes().putValue("Rpm-Release", release);
     }
 }
