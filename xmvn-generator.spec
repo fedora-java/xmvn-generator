@@ -14,7 +14,7 @@ Source:         https://github.com/fedora-java/xmvn-generator/releases/download/
 %if %{with bootstrap}
 BuildRequires:  javapackages-bootstrap
 %else
-BuildRequires:  maven-local
+BuildRequires:  maven-local-openjdk25
 BuildRequires:  mvn(io.kojan:dola-bsx-api)
 BuildRequires:  mvn(org.apache.commons:commons-compress)
 BuildRequires:  mvn(org.easymock:easymock)
