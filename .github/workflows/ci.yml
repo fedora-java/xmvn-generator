@@ -13,6 +13,6 @@ jobs:
       - name: Install dependencies
         run: microdnf -y module enable maven:3.9 && microdnf -y install git-core maven-unbound
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Maven build
         run: mvn -V -B -Prelease -Dgpg.skip -Dtest=\!RpmLujavriteTest clean install
