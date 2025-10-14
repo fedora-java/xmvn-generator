@@ -8,10 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: docker.io/library/eclipse-temurin:21-jdk-ubi9-minimal
+    container: docker.io/library/eclipse-temurin:25-jdk-ubi10-minimal
     steps:
       - name: Install dependencies
-        run: microdnf -y module enable maven:3.9 && microdnf -y install git-core maven-unbound
+        run: microdnf -y install git-core maven-unbound
       - name: Checkout sources
         uses: actions/checkout@v5
       - name: Maven build
